@@ -1,19 +1,155 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Album } from '../lib/supabase';
-import { Plus } from 'lucide-react';
+import { Plus, Search, Loader2, Music } from 'lucide-react';
 
 interface AddAlbumFormProps {
   onAddAlbum: (album: Omit<Album, 'id' | 'created_at' | 'updated_at'>) => void;
 }
 
+interface MusicBrainzRelease {
+  id: string;
+  title: string;
+  date?: string;
+  'first-release-date'?: string;
+  'cover-art-archive'?: {
+    front: boolean;
+    back: boolean;
+    count: number;
+  };
+}
+
+interface AlbumWithArt extends MusicBrainzRelease {
+  coverArtUrl?: string;
+}
+
 const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   const [formData, setFormData] = useState({
     title: '',
-    artist: '',
-    release_year: '',
-    album_art_url: ''
+    artist: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResults, setSearchResults] = useState<AlbumWithArt[]>([]);
+  const [selectedAlbum, setSelectedAlbum] = useState<AlbumWithArt | null>(null);
+
+  const searchMusicBrainz = async (title: string, artist: string) => {
+    if (!title || !artist) return;
+    
+    setIsSearching(true);
+    try {
+      // Search for releases by title and artist
+      const query = `release:"${title}" AND artist:"${artist}"`;
+      const response = await fetch(
+        `https://musicbrainz.org/ws/2/release/?query=${encodeURIComponent(query)}&fmt=json&limit=5`,
+        {
+          headers: {
+            'User-Agent': 'VinylCatalog/1.0.0 (mattberman1@gmail.com)'
+          }
+        }
+      );
+      
+      if (response.ok) {
+        const data = await response.json();
+        console.log('MusicBrainz response:', data); // Debug log
+        
+        // Initialize results with cover art URLs
+        const resultsWithArt: AlbumWithArt[] = (data.releases || []).map((release: MusicBrainzRelease) => ({
+          ...release,
+          coverArtUrl: undefined // Will be populated by useEffect
+        }));
+        
+        setSearchResults(resultsWithArt);
+      } else {
+        console.error('MusicBrainz API error:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error searching MusicBrainz:', error);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const fetchCoverArt = useCallback(async (albumId: string): Promise<string | undefined> => {
+    try {
+      console.log('Fetching cover art for album ID:', albumId);
+      
+      // Use a simpler approach - directly try to get the cover art URL
+      // The Cover Art Archive has a predictable URL structure
+      const coverArtUrl = `https://coverartarchive.org/release/${albumId}/front-250`;
+      
+      // Test if the image exists by trying to fetch it
+      const response = await fetch(coverArtUrl, {
+        method: 'HEAD' // Only check if the resource exists, don't download it
+      });
+      
+      if (response.ok) {
+        console.log('Found cover art URL:', coverArtUrl);
+        return coverArtUrl;
+      } else {
+        console.log('No cover art found for album ID:', albumId);
+        return undefined;
+      }
+    } catch (error) {
+      console.error('Error fetching cover art for', albumId, error);
+      return undefined;
+    }
+  }, []);
+
+  // Fetch cover art for search results
+  useEffect(() => {
+    const loadCoverArt = async () => {
+      if (searchResults.length === 0) return;
+      
+      console.log('Loading cover art for', searchResults.length, 'albums');
+      
+      const updatedResults = await Promise.all(
+        searchResults.map(async (album) => {
+          const coverArtUrl = await fetchCoverArt(album.id);
+          return {
+            ...album,
+            coverArtUrl
+          };
+        })
+      );
+      
+      console.log('Updated results with cover art:', updatedResults);
+      setSearchResults(updatedResults);
+    };
+
+    loadCoverArt();
+  }, [searchResults.length, fetchCoverArt]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getAlbumArt = async (releaseId: string): Promise<string> => {
+    const coverArtUrl = await fetchCoverArt(releaseId);
+    return coverArtUrl || '';
+  };
+
+  const extractReleaseYear = (album: MusicBrainzRelease): number => {
+    // Try multiple date fields that MusicBrainz might use
+    const dateString = album.date || album['first-release-date'];
+    
+    if (dateString) {
+      // Extract year from date string (could be YYYY, YYYY-MM, or YYYY-MM-DD)
+      const yearMatch = dateString.match(/^(\d{4})/);
+      if (yearMatch) {
+        return parseInt(yearMatch[1]);
+      }
+    }
+    
+    return 0;
+  };
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.artist) return;
+    
+    await searchMusicBrainz(formData.title, formData.artist);
+  };
+
+  const handleSelectAlbum = async (album: AlbumWithArt) => {
+    setSelectedAlbum(album);
+    setSearchResults([]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,20 +157,31 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
 
     setIsSubmitting(true);
     try {
+      let releaseYear = 0;
+      let albumArtUrl = '';
+
+      if (selectedAlbum) {
+        // Extract release year from the selected album
+        releaseYear = extractReleaseYear(selectedAlbum);
+        
+        // Use the cover art URL from the selected album or fetch it
+        albumArtUrl = selectedAlbum.coverArtUrl || await getAlbumArt(selectedAlbum.id);
+      }
+
       await onAddAlbum({
         title: formData.title,
         artist: formData.artist,
-        release_year: formData.release_year ? parseInt(formData.release_year) : 0,
-        album_art_url: formData.album_art_url || ''
+        release_year: releaseYear,
+        album_art_url: albumArtUrl
       });
 
       // Reset form
       setFormData({
         title: '',
-        artist: '',
-        release_year: '',
-        album_art_url: ''
+        artist: ''
       });
+      setSelectedAlbum(null);
+      setSearchResults([]);
     } catch (error) {
       console.error('Failed to add album:', error);
     } finally {
@@ -53,7 +200,8 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Album</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      
+      <form onSubmit={handleSearch} className="space-y-4 mb-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
             Album Title *
@@ -86,38 +234,104 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
           />
         </div>
 
-        <div>
-          <label htmlFor="release_year" className="block text-sm font-medium text-gray-700 mb-1">
-            Release Year
-          </label>
-          <input
-            type="number"
-            id="release_year"
-            name="release_year"
-            value={formData.release_year}
-            onChange={handleInputChange}
-            min="1900"
-            max={new Date().getFullYear()}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., 1975"
-          />
-        </div>
+        <button
+          type="submit"
+          disabled={isSearching || !formData.title || !formData.artist}
+          className="w-full bg-gray-600 text-white py-2 px-4 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+        >
+          {isSearching ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Searching...</span>
+            </>
+          ) : (
+            <>
+              <Search className="h-4 w-4" />
+              <span>Search Album Info</span>
+            </>
+          )}
+        </button>
+      </form>
 
-        <div>
-          <label htmlFor="album_art_url" className="block text-sm font-medium text-gray-700 mb-1">
-            Album Art URL
-          </label>
-          <input
-            type="url"
-            id="album_art_url"
-            name="album_art_url"
-            value={formData.album_art_url}
-            onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="https://example.com/album-art.jpg"
-          />
+      {/* Search Results */}
+      {searchResults.length > 0 && (
+        <div className="mb-4">
+          <h3 className="text-sm font-medium text-gray-700 mb-2">Select an album:</h3>
+          <div className="space-y-3">
+            {searchResults.map((album) => {
+              const releaseYear = extractReleaseYear(album);
+              return (
+                <button
+                  key={album.id}
+                  onClick={() => handleSelectAlbum(album)}
+                  className="w-full text-left p-3 border border-gray-200 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-3"
+                >
+                  <div className="flex-shrink-0">
+                    {album.coverArtUrl ? (
+                      <img
+                        src={album.coverArtUrl}
+                        alt={`${album.title} cover art`}
+                        className="h-12 w-12 rounded object-cover"
+                        onError={(e) => {
+                          console.error('Image failed to load:', album.coverArtUrl);
+                          // Fallback to placeholder if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.style.display = 'none';
+                          target.nextElementSibling?.classList.remove('hidden');
+                        }}
+                      />
+                    ) : null}
+                    <div className={`h-12 w-12 rounded bg-gray-200 flex items-center justify-center ${album.coverArtUrl ? 'hidden' : ''}`}>
+                      <Music className="h-6 w-6 text-gray-400" />
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-gray-900 truncate">{album.title}</div>
+                    <div className="text-sm text-gray-500">
+                      {releaseYear > 0 ? 
+                        `Released: ${releaseYear}` : 
+                        'Release date unknown'
+                      }
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
+      )}
 
+      {/* Selected Album Info */}
+      {selectedAlbum && (
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <h3 className="text-sm font-medium text-blue-900 mb-2">Selected Album:</h3>
+          <div className="flex items-center space-x-3">
+            {selectedAlbum.coverArtUrl ? (
+              <img
+                src={selectedAlbum.coverArtUrl}
+                alt={`${selectedAlbum.title} cover art`}
+                className="h-16 w-16 rounded object-cover"
+                onError={(e) => {
+                  console.error('Selected album image failed to load:', selectedAlbum.coverArtUrl);
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  target.nextElementSibling?.classList.remove('hidden');
+                }}
+              />
+            ) : null}
+            <div className={`h-16 w-16 rounded bg-gray-200 flex items-center justify-center ${selectedAlbum.coverArtUrl ? 'hidden' : ''}`}>
+              <Music className="h-8 w-8 text-gray-400" />
+            </div>
+            <div className="text-sm text-blue-800">
+              <div><strong>{selectedAlbum.title}</strong></div>
+              <div>Release Year: {extractReleaseYear(selectedAlbum) > 0 ? extractReleaseYear(selectedAlbum) : 'Unknown'}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add to Collection Button */}
+      <form onSubmit={handleSubmit}>
         <button
           type="submit"
           disabled={isSubmitting || !formData.title || !formData.artist}
@@ -125,13 +339,13 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
         >
           {isSubmitting ? (
             <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+              <Loader2 className="h-4 w-4 animate-spin" />
               <span>Adding...</span>
             </>
           ) : (
             <>
               <Plus className="h-4 w-4" />
-              <span>Add Album</span>
+              <span>Add to Collection</span>
             </>
           )}
         </button>
