@@ -25,6 +25,17 @@ export const albumService = {
     return data
   },
 
+  // Add multiple albums (bulk import)
+  async addAlbums(albums: Omit<Album, 'id' | 'created_at' | 'updated_at'>[]): Promise<Album[]> {
+    const { data, error } = await supabase
+      .from('albums')
+      .insert(albums)
+      .select()
+    
+    if (error) throw error
+    return data || []
+  },
+
   // Update an album
   async updateAlbum(id: string, updates: Partial<Album>): Promise<Album> {
     const { data, error } = await supabase
