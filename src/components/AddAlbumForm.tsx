@@ -34,7 +34,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
 
   const searchMusicBrainz = async (title: string, artist: string) => {
     if (!title || !artist) return;
-    
+
     setIsSearching(true);
     try {
       // Search for releases by title and artist
@@ -47,17 +47,16 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
           }
         }
       );
-      
+
       if (response.ok) {
         const data = await response.json();
-        console.log('MusicBrainz response:', data); // Debug log
-        
+
         // Initialize results with cover art URLs
         const resultsWithArt: AlbumWithArt[] = (data.releases || []).map((release: MusicBrainzRelease) => ({
           ...release,
           coverArtUrl: undefined // Will be populated by useEffect
         }));
-        
+
         setSearchResults(resultsWithArt);
       } else {
         console.error('MusicBrainz API error:', response.status, response.statusText);
@@ -71,22 +70,19 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
 
   const fetchCoverArt = useCallback(async (albumId: string): Promise<string | undefined> => {
     try {
-      console.log('Fetching cover art for album ID:', albumId);
-      
+
       // Use a simpler approach - directly try to get the cover art URL
       // The Cover Art Archive has a predictable URL structure
       const coverArtUrl = `https://coverartarchive.org/release/${albumId}/front-250`;
-      
+
       // Test if the image exists by trying to fetch it
       const response = await fetch(coverArtUrl, {
         method: 'HEAD' // Only check if the resource exists, don't download it
       });
-      
+
       if (response.ok) {
-        console.log('Found cover art URL:', coverArtUrl);
         return coverArtUrl;
       } else {
-        console.log('No cover art found for album ID:', albumId);
         return undefined;
       }
     } catch (error) {
@@ -99,11 +95,11 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   useEffect(() => {
     const loadCoverArt = async () => {
       if (searchResults.length === 0) return;
-      
-      console.log('Loading cover art for', searchResults.length, 'albums');
-      
+      if (!searchResults.some(album => !album.coverArtUrl)) return;
+
       const updatedResults = await Promise.all(
-        searchResults.map(async (album) => {
+        searchResults.map(async (album: AlbumWithArt) => {
+          if (album.coverArtUrl) return album;
           const coverArtUrl = await fetchCoverArt(album.id);
           return {
             ...album,
@@ -111,13 +107,12 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
           };
         })
       );
-      
-      console.log('Updated results with cover art:', updatedResults);
+
       setSearchResults(updatedResults);
     };
 
-    loadCoverArt();
-  }, [searchResults.length, fetchCoverArt]); // eslint-disable-line react-hooks/exhaustive-deps
+    void loadCoverArt();
+  }, [searchResults, fetchCoverArt]);
 
   const getAlbumArt = async (releaseId: string): Promise<string> => {
     const coverArtUrl = await fetchCoverArt(releaseId);
@@ -127,7 +122,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   const extractReleaseYear = (album: MusicBrainzRelease): number => {
     // Try multiple date fields that MusicBrainz might use
     const dateString = album.date || album['first-release-date'];
-    
+
     if (dateString) {
       // Extract year from date string (could be YYYY, YYYY-MM, or YYYY-MM-DD)
       const yearMatch = dateString.match(/^(\d{4})/);
@@ -135,14 +130,14 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
         return parseInt(yearMatch[1]);
       }
     }
-    
+
     return 0;
   };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.title || !formData.artist) return;
-    
+
     await searchMusicBrainz(formData.title, formData.artist);
   };
 
@@ -163,7 +158,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
       if (selectedAlbum) {
         // Extract release year from the selected album
         releaseYear = extractReleaseYear(selectedAlbum);
-        
+
         // Use the cover art URL from the selected album or fetch it
         albumArtUrl = selectedAlbum.coverArtUrl || await getAlbumArt(selectedAlbum.id);
       }
@@ -193,14 +188,14 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name as keyof typeof prev]: value
     }));
   };
 
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Album</h2>
-      
+
       <form onSubmit={handleSearch} className="space-y-4 mb-4">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
@@ -258,7 +253,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
         <div className="mb-4">
           <h3 className="text-sm font-medium text-gray-700 mb-2">Select an album:</h3>
           <div className="space-y-3">
-            {searchResults.map((album) => {
+            {searchResults.map((album: AlbumWithArt) => {
               const releaseYear = extractReleaseYear(album);
               return (
                 <button
@@ -272,7 +267,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                         src={album.coverArtUrl}
                         alt={`${album.title} cover art`}
                         className="h-12 w-12 rounded object-cover"
-                        onError={(e) => {
+                          onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                           console.error('Image failed to load:', album.coverArtUrl);
                           // Fallback to placeholder if image fails to load
                           const target = e.target as HTMLImageElement;
@@ -288,8 +283,8 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900 truncate">{album.title}</div>
                     <div className="text-sm text-gray-500">
-                      {releaseYear > 0 ? 
-                        `Released: ${releaseYear}` : 
+                      {releaseYear > 0 ?
+                        `Released: ${releaseYear}` :
                         'Release date unknown'
                       }
                     </div>
@@ -311,7 +306,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                 src={selectedAlbum.coverArtUrl}
                 alt={`${selectedAlbum.title} cover art`}
                 className="h-16 w-16 rounded object-cover"
-                onError={(e) => {
+                  onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                   console.error('Selected album image failed to load:', selectedAlbum.coverArtUrl);
                   const target = e.target as HTMLImageElement;
                   target.style.display = 'none';
@@ -354,4 +349,4 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   );
 };
 
-export default AddAlbumForm; 
+export default AddAlbumForm;
