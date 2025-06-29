@@ -3,6 +3,7 @@ import { Album } from './lib/supabase';
 import { albumService } from './services/albumService';
 import AlbumList from './components/AlbumList';
 import AddAlbumForm from './components/AddAlbumForm';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
 function App() {
@@ -85,4 +86,11 @@ function App() {
   );
 }
 
-export default App; 
+// Wrap the App with ErrorBoundary
+const AppWithErrorBoundary = () => (
+  <ErrorBoundary>
+    <App />
+  </ErrorBoundary>
+);
+
+export default AppWithErrorBoundary; 
