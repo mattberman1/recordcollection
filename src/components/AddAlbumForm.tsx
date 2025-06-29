@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Album } from '../lib/supabase';
-import { Plus, Search } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 interface AddAlbumFormProps {
   onAddAlbum: (album: Omit<Album, 'id' | 'created_at' | 'updated_at'>) => void;
