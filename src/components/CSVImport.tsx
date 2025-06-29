@@ -29,11 +29,14 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
       reader.onload = (e) => {
         try {
           const text = e.target?.result as string;
-          const lines = text.split('\n').filter(line => line.trim());
-          
-          // Skip header row if it exists
-          const dataLines = lines.slice(1);
-          
+          const lines = text.split(/\r?\n/).filter(line => line.trim());
+
+          // Skip header row if it looks like column names
+          let dataLines = lines;
+          if (lines[0].toLowerCase().includes('album') && lines[0].toLowerCase().includes('artist')) {
+            dataLines = lines.slice(1);
+          }
+
           const rows: CSVRow[] = dataLines.map((line, index) => {
             const columns = line.split(',').map(col => col.trim().replace(/"/g, ''));
             if (columns.length < 2) {
@@ -44,7 +47,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
               artistName: columns[1]
             };
           });
-          
+
           resolve(rows);
         } catch (error) {
           reject(error);
@@ -69,22 +72,22 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
           }
         }
       );
-      
+
       if (response.status === 503) {
         throw new Error('MusicBrainz API is temporarily unavailable. Please try again later.');
       }
-      
+
       if (response.status === 429) {
         throw new Error('Rate limit exceeded. Please wait a moment and try again.');
       }
-      
+
       if (!response.ok) {
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       const releases = data.releases || [];
-      
+
       if (releases.length > 0) {
         // Sort by release date (earliest first)
         const sortedReleases = releases.sort((a: any, b: any) => {
@@ -94,10 +97,10 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
           const yearB = parseInt(dateB.split('-')[0]) || 9999;
           return yearA - yearB;
         });
-        
+
         const selectedRelease = sortedReleases[0];
         const releaseYear = parseInt((selectedRelease.date || selectedRelease['first-release-date'] || '').split('-')[0]) || 0;
-        
+
         // Get cover art
         let albumArtUrl = '';
         try {
@@ -111,7 +114,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
         } catch (error) {
           console.error('Error fetching cover art:', error);
         }
-        
+
         return {
           title: selectedRelease.title,
           artist: artist,
@@ -119,7 +122,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
           album_art_url: albumArtUrl
         };
       }
-      
+
       return null;
     } catch (error) {
       console.error('Error searching MusicBrainz:', error);
@@ -142,15 +145,15 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
       // Process albums with rate limiting
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
-        
+
         try {
           // Add delay between requests to respect rate limits
           if (i > 0) {
             await delay(1000); // 1 second delay between requests
           }
-          
+
           const album = await searchMusicBrainz(row.albumName, row.artistName);
-          
+
           if (album) {
             results.push({
               row,
@@ -170,9 +173,9 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
             success: false,
             error: error instanceof Error ? error.message : 'Search failed'
           });
-          
+
           // If we hit a rate limit or service unavailable, stop processing
-          if (error instanceof Error && 
+          if (error instanceof Error &&
               (error.message.includes('Rate limit') || error.message.includes('unavailable'))) {
             break;
           }
@@ -193,7 +196,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
     const allAlbums = importResults
       .filter(result => result.success && result.album)
       .map(result => result.album!);
-    
+
     if (allAlbums.length > 0) {
       onAddAlbums(allAlbums);
       setShowResults(false);
@@ -207,7 +210,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Bulk Import from CSV</h2>
-      
+
       <div className="mb-4">
         <p className="text-sm text-gray-600 mb-2">
           Upload a CSV file with columns: <strong>Album Name, Artist Name</strong>
@@ -306,4 +309,4 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
   );
 };
 
-export default CSVImport; 
+export default CSVImport;
