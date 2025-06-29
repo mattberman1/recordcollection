@@ -36,6 +36,17 @@ const CollectionPage: React.FC = () => {
     }
   };
 
+  const handleUpdateAlbum = async (updatedAlbum: Album) => {
+    try {
+      setAlbums(albums.map(album => 
+        album.id === updatedAlbum.id ? updatedAlbum : album
+      ));
+    } catch (err) {
+      setError('Failed to update album');
+      console.error(err);
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
@@ -67,6 +78,7 @@ const CollectionPage: React.FC = () => {
           <AlbumList 
             albums={albums} 
             onDeleteAlbum={handleDeleteAlbum}
+            onUpdateAlbum={handleUpdateAlbum}
           />
         </div>
       </div>
