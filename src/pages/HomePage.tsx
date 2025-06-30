@@ -4,7 +4,7 @@ import { Disc, Plus, Upload, Music } from 'lucide-react';
 
 const HomePage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <div className="flex justify-center mb-6">
@@ -20,7 +20,7 @@ const HomePage: React.FC = () => {
           {/* View Collection Card */}
           <Link
             to="/collection"
-            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow group"
+            className="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow group"
           >
             <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6 mx-auto group-hover:bg-blue-200 transition-colors">
               <Music className="h-8 w-8 text-blue-600" />
@@ -34,7 +34,7 @@ const HomePage: React.FC = () => {
           {/* Add Albums Card */}
           <Link
             to="/add"
-            className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow group"
+            className="bg-white/80 backdrop-blur-md rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow group"
           >
             <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6 mx-auto group-hover:bg-green-200 transition-colors">
               <Plus className="h-8 w-8 text-green-600" />

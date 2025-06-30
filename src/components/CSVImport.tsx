@@ -208,7 +208,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
   const failedCount = importResults.filter(r => !r.success).length;
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Bulk Import from CSV</h2>
 
       <div className="mb-4">

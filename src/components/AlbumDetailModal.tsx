@@ -132,7 +132,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
           <h2 className="text-2xl font-bold text-gray-800">
@@ -164,7 +164,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
             {/* Cover Art */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">Cover Art</h3>
-              <div className="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+              <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
                 {getCurrentImageUrl() ? (
                   <img
                     src={getCurrentImageUrl()}
@@ -191,7 +191,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                       className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                         uploadMethod === 'url'
                           ? 'bg-blue-100 text-blue-700 border border-blue-300'
-                          : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200'
+                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200'
                       }`}
                     >
                       URL
@@ -201,7 +201,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                       className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                         uploadMethod === 'file'
                           ? 'bg-blue-100 text-blue-700 border border-blue-300'
-                          : 'bg-gray-100 text-gray-600 border border-gray-300 hover:bg-gray-200'
+                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200'
                       }`}
                     >
                       Upload

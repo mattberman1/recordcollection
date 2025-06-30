@@ -34,7 +34,7 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
 
   if (albums.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow p-8 text-center">
+      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-8 text-center">
         <Music className="mx-auto h-12 w-12 text-gray-400 mb-4" />
         <h3 className="text-lg font-medium text-gray-900 mb-2">No albums yet</h3>
         <p className="text-gray-500">Start building your vinyl collection by adding your first album!</p>
@@ -66,7 +66,7 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
 
   return (
     <>
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow">
         <div className="px-6 py-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">Your Collection ({albums.length} albums)</h2>
         </div>
