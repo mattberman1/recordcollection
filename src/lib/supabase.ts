@@ -26,4 +26,4 @@ export interface Database {
       }
     }
   }
-} 
+}

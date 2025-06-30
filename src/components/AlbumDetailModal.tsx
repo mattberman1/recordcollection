@@ -1,14 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Album } from '../lib/supabase';
-import { albumService } from '../services/albumService';
-import { X, Edit, Save, Trash2, Music, Calendar, User, Upload } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react'
+import { Album } from '../lib/supabase'
+import { albumService } from '../services/albumService'
+import { X, Edit, Save, Trash2, Music, Calendar, User, Upload } from 'lucide-react'
 
 interface AlbumDetailModalProps {
-  album: Album | null;
-  isOpen: boolean;
-  onClose: () => void;
-  onUpdate: (updatedAlbum: Album) => void;
-  onDelete: (id: string) => void;
+  album: Album | null
+  isOpen: boolean
+  onClose: () => void
+  onUpdate: (updatedAlbum: Album) => void
+  onDelete: (id: string) => void
 }
 
 const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
@@ -16,119 +16,118 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
   isOpen,
   onClose,
   onUpdate,
-  onDelete
+  onDelete,
 }) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedAlbum, setEditedAlbum] = useState<Album | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
-  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url');
-  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isEditing, setIsEditing] = useState(false)
+  const [editedAlbum, setEditedAlbum] = useState<Album | null>(null)
+  const [isSaving, setIsSaving] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url')
+  const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
+  const [isUploading, setIsUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (album) {
-      setEditedAlbum({ ...album });
-      setIsEditing(false);
-      setUploadedImageUrl(null);
-      setUploadMethod('url');
+      setEditedAlbum({ ...album })
+      setIsEditing(false)
+      setUploadedImageUrl(null)
+      setUploadMethod('url')
     }
-  }, [album]);
+  }, [album])
 
   if (!isOpen || !album || !editedAlbum) {
-    return null;
+    return null
   }
 
   const handleSave = async () => {
-    if (!editedAlbum) return;
-    
+    if (!editedAlbum) return
+
     try {
-      setIsSaving(true);
+      setIsSaving(true)
       const updatedAlbum = await albumService.updateAlbum(editedAlbum.id, {
         title: editedAlbum.title,
         artist: editedAlbum.artist,
         release_year: editedAlbum.release_year,
-        album_art_url: uploadedImageUrl || editedAlbum.album_art_url
-      });
-      onUpdate(updatedAlbum);
-      setIsEditing(false);
-      setUploadedImageUrl(null);
+        album_art_url: uploadedImageUrl || editedAlbum.album_art_url,
+      })
+      onUpdate(updatedAlbum)
+      setIsEditing(false)
+      setUploadedImageUrl(null)
     } catch (error) {
-      console.error('Failed to update album:', error);
+      console.error('Failed to update album:', error)
     } finally {
-      setIsSaving(false);
+      setIsSaving(false)
     }
-  };
+  }
 
   const handleDelete = async () => {
     if (!window.confirm(`Are you sure you want to delete "${album.title}" by ${album.artist}?`)) {
-      return;
+      return
     }
 
     try {
-      setIsDeleting(true);
-      await albumService.deleteAlbum(album.id);
-      onDelete(album.id);
-      onClose();
+      setIsDeleting(true)
+      await albumService.deleteAlbum(album.id)
+      onDelete(album.id)
+      onClose()
     } catch (error) {
-      console.error('Failed to delete album:', error);
+      console.error('Failed to delete album:', error)
     } finally {
-      setIsDeleting(false);
+      setIsDeleting(false)
     }
-  };
+  }
 
   const handleInputChange = (field: keyof Album, value: string | number) => {
     if (editedAlbum) {
       setEditedAlbum({
         ...editedAlbum,
-        [field]: value
-      });
+        [field]: value,
+      })
     }
-  };
+  }
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+    const file = event.target.files?.[0]
+    if (!file) return
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file (JPEG, PNG, GIF, etc.)');
-      return;
+      alert('Please select an image file (JPEG, PNG, GIF, etc.)')
+      return
     }
 
     // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
-      return;
+      alert('File size must be less than 5MB')
+      return
     }
 
     try {
-      setIsUploading(true);
-      
+      setIsUploading(true)
+
       // Convert file to base64 for preview and storage
-      const reader = new FileReader();
+      const reader = new FileReader()
       reader.onload = (e) => {
-        const result = e.target?.result as string;
-        setUploadedImageUrl(result);
-      };
-      reader.readAsDataURL(file);
-      
+        const result = e.target?.result as string
+        setUploadedImageUrl(result)
+      }
+      reader.readAsDataURL(file)
     } catch (error) {
-      console.error('Failed to upload image:', error);
-      alert('Failed to upload image. Please try again.');
+      console.error('Failed to upload image:', error)
+      alert('Failed to upload image. Please try again.')
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+    fileInputRef.current?.click()
+  }
 
   const getCurrentImageUrl = () => {
-    return uploadedImageUrl || editedAlbum.album_art_url;
-  };
+    return uploadedImageUrl || editedAlbum.album_art_url
+  }
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -171,17 +170,19 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                     alt={`${editedAlbum.title} cover art`}
                     className="w-full h-full object-cover"
                     onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                      target.nextElementSibling?.classList.remove('hidden');
+                      const target = e.target as HTMLImageElement
+                      target.style.display = 'none'
+                      target.nextElementSibling?.classList.remove('hidden')
                     }}
                   />
                 ) : null}
-                <div className={`w-full h-full flex items-center justify-center text-gray-500 ${getCurrentImageUrl() ? 'hidden' : ''}`}>
+                <div
+                  className={`w-full h-full flex items-center justify-center text-gray-500 ${getCurrentImageUrl() ? 'hidden' : ''}`}
+                >
                   <Music className="h-16 w-16" />
                 </div>
               </div>
-              
+
               {isEditing && (
                 <div className="space-y-4">
                   {/* Upload Method Toggle */}
@@ -289,13 +290,11 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
             {/* Album Information */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800">Album Information</h3>
-              
+
               <div className="space-y-4">
                 {/* Title */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Title
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
                   {isEditing ? (
                     <input
                       type="text"
@@ -313,9 +312,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
 
                 {/* Artist */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Artist
-                  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Artist</label>
                   {isEditing ? (
                     <input
                       type="text"
@@ -340,7 +337,9 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                     <input
                       type="number"
                       value={editedAlbum.release_year || ''}
-                      onChange={(e) => handleInputChange('release_year', parseInt(e.target.value) || 0)}
+                      onChange={(e) =>
+                        handleInputChange('release_year', parseInt(e.target.value) || 0)
+                      }
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       min="1900"
                       max={new Date().getFullYear()}
@@ -348,9 +347,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                   ) : (
                     <div className="flex items-center space-x-2 text-gray-800">
                       <Calendar className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">
-                        {editedAlbum.release_year || 'Unknown'}
-                      </span>
+                      <span className="font-medium">{editedAlbum.release_year || 'Unknown'}</span>
                     </div>
                   )}
                 </div>
@@ -358,10 +355,12 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                 {/* Metadata */}
                 <div className="pt-4 space-y-2">
                   <div className="text-sm text-gray-500">
-                    <span className="font-medium">Added:</span> {new Date(editedAlbum.created_at).toLocaleDateString()}
+                    <span className="font-medium">Added:</span>{' '}
+                    {new Date(editedAlbum.created_at).toLocaleDateString()}
                   </div>
                   <div className="text-sm text-gray-500">
-                    <span className="font-medium">Last Updated:</span> {new Date(editedAlbum.updated_at).toLocaleDateString()}
+                    <span className="font-medium">Last Updated:</span>{' '}
+                    {new Date(editedAlbum.updated_at).toLocaleDateString()}
                   </div>
                 </div>
               </div>
@@ -376,8 +375,8 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
               <>
                 <button
                   onClick={() => {
-                    setIsEditing(false);
-                    setUploadedImageUrl(null);
+                    setIsEditing(false)
+                    setUploadedImageUrl(null)
                   }}
                   className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
                   disabled={isSaving}
@@ -425,7 +424,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AlbumDetailModal; 
+export default AlbumDetailModal

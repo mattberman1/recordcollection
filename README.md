@@ -30,12 +30,14 @@ A modern web application for cataloging and managing your vinyl record collectio
 ### Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repo-url>
 cd vinyl-catalog
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -77,6 +79,7 @@ CREATE POLICY "Allow all operations" ON albums FOR ALL USING (true);
 ```
 
 5. Start the development server:
+
 ```bash
 npm start
 ```
@@ -126,4 +129,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] User authentication
 - [ ] Multiple collections support
 - [ ] Album condition tracking
-- [ ] Wishlist functionality 
+- [ ] Wishlist functionality
