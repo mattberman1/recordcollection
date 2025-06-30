@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Disc, Plus, Upload, Music } from 'lucide-react'
+import { Plus, Upload, Music } from 'lucide-react'
 
 const HomePage: React.FC = () => {
   return (
@@ -8,7 +8,7 @@ const HomePage: React.FC = () => {
       <div className="container mx-auto px-4 py-16">
         <div className="text-center mb-16">
           <div className="flex justify-center mb-6">
-            <Disc className="h-20 w-20 text-blue-600" />
+            <img src="/logo.png" alt="Vinyl Catalog Logo" className="h-20 w-20 rounded-xl shadow" />
           </div>
           <h1 className="text-5xl font-bold text-gray-800 dark:text-gray-100 mb-4">
             Vinyl Catalog
@@ -85,7 +85,7 @@ const HomePage: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
-                <Disc className="h-6 w-6 text-purple-600" />
+                <img src="/logo.png" alt="Vinyl Catalog Logo" className="h-6 w-6" />
               </div>
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
                 Organized View
