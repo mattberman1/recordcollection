@@ -31,15 +31,15 @@ const AddAlbumPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Add Albums</h1>
-          <p className="text-gray-600">Add albums to your vinyl collection</p>
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">Add Albums</h1>
+          <p className="text-gray-600 dark:text-gray-400">Add albums to your vinyl collection</p>
         </header>
 
         {successMessage && (
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6 flex items-center justify-center">
+          <div className="bg-green-100 border border-green-400 text-green-700 dark:bg-green-200/10 dark:border-green-400 dark:text-green-300 px-4 py-3 rounded mb-6 flex items-center justify-center">
             <CheckCircle className="h-5 w-5 mr-2" />
             {successMessage}
           </div>
@@ -47,14 +47,14 @@ const AddAlbumPage: React.FC = () => {
 
         <div className="max-w-2xl mx-auto">
           {/* Tab Navigation */}
-          <div className="bg-white/80 backdrop-blur-md rounded-xl shadow mb-6">
-            <div className="flex border-b border-gray-200">
+          <div className="bg-white/80 backdrop-blur-md rounded-xl shadow mb-6 dark:bg-gray-800/80">
+            <div className="flex border-b border-gray-200 dark:border-gray-700">
               <button
                 onClick={() => setActiveTab('single')}
                 className={`flex-1 px-6 py-4 text-sm font-medium flex items-center justify-center space-x-2 ${
                   activeTab === 'single'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
                 <Plus className="h-5 w-5" />
@@ -64,8 +64,8 @@ const AddAlbumPage: React.FC = () => {
                 onClick={() => setActiveTab('bulk')}
                 className={`flex-1 px-6 py-4 text-sm font-medium flex items-center justify-center space-x-2 ${
                   activeTab === 'bulk'
-                    ? 'text-blue-600 border-b-2 border-blue-600'
-                    : 'text-gray-500 hover:text-gray-700'
+                    ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                 }`}
               >
                 <Upload className="h-5 w-5" />

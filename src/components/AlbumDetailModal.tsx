@@ -129,17 +129,17 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white/90 backdrop-blur-md rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto dark:bg-gray-800/90">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-800">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
             {isEditing ? 'Edit Album' : 'Album Details'}
           </h2>
           <div className="flex items-center space-x-2">
             {!isEditing && (
               <button
                 onClick={() => setIsEditing(true)}
-                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 dark:text-gray-300 dark:hover:text-blue-400 dark:hover:bg-blue-900 rounded-lg transition-colors"
                 title="Edit album"
               >
                 <Edit className="h-5 w-5" />
@@ -147,7 +147,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
             )}
             <button
               onClick={onClose}
-              className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700 rounded-lg transition-colors"
               title="Close"
             >
               <X className="h-5 w-5" />
@@ -160,8 +160,8 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
           <div className="grid md:grid-cols-2 gap-6">
             {/* Cover Art */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800">Cover Art</h3>
-              <div className="aspect-square bg-gray-50 rounded-lg overflow-hidden">
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Cover Art</h3>
+              <div className="aspect-square bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden">
                 {getCurrentImageUrl() ? (
                   <img
                     src={getCurrentImageUrl()}
@@ -189,8 +189,8 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                       onClick={() => setUploadMethod('url')}
                       className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                         uploadMethod === 'url'
-                          ? 'bg-blue-100 text-blue-700 border border-blue-300'
-                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200'
+                          ? 'bg-blue-100 text-blue-700 border border-blue-300 dark:bg-blue-900 dark:text-blue-300'
+                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
                       }`}
                     >
                       URL
@@ -199,8 +199,8 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                       onClick={() => setUploadMethod('file')}
                       className={`flex-1 px-3 py-2 text-sm font-medium rounded-md transition-colors ${
                         uploadMethod === 'file'
-                          ? 'bg-blue-100 text-blue-700 border border-blue-300'
-                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200'
+                          ? 'bg-blue-100 text-blue-700 border border-blue-300 dark:bg-blue-900 dark:text-blue-300'
+                          : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600'
                       }`}
                     >
                       File
@@ -210,7 +210,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                   {/* URL Input */}
                   {uploadMethod === 'url' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Album Art URL
                       </label>
                       <input
@@ -226,7 +226,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                   {/* File Upload */}
                   {uploadMethod === 'file' && (
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         Upload Album Art
                       </label>
                       <button
@@ -262,11 +262,13 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
 
             {/* Album Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800">Album Details</h3>
+              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+                Album Details
+              </h3>
 
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <Music className="h-4 w-4 inline mr-1" />
                   Title
                 </label>
@@ -278,13 +280,15 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 ) : (
-                  <p className="text-gray-900 font-medium">{editedAlbum.title}</p>
+                  <p className="text-gray-900 font-medium dark:text-gray-100">
+                    {editedAlbum.title}
+                  </p>
                 )}
               </div>
 
               {/* Artist */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <User className="h-4 w-4 inline mr-1" />
                   Artist
                 </label>
@@ -296,13 +300,15 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 ) : (
-                  <p className="text-gray-900 font-medium">{editedAlbum.artist}</p>
+                  <p className="text-gray-900 font-medium dark:text-gray-100">
+                    {editedAlbum.artist}
+                  </p>
                 )}
               </div>
 
               {/* Release Year */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   <Calendar className="h-4 w-4 inline mr-1" />
                   Release Year
                 </label>
@@ -318,7 +324,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 ) : (
-                  <p className="text-gray-900 font-medium">
+                  <p className="text-gray-900 font-medium dark:text-gray-100">
                     {editedAlbum.release_year || 'Unknown'}
                   </p>
                 )}
@@ -327,7 +333,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+          <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-2">
               {isEditing && (
                 <>
@@ -354,7 +360,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                       setEditedAlbum({ ...album })
                       setUploadedImageUrl(null)
                     }}
-                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                    className="px-4 py-2 bg-gray-300 text-gray-700 dark:bg-gray-600 dark:text-gray-100 rounded-md hover:bg-gray-400 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-500"
                   >
                     Cancel
                   </button>

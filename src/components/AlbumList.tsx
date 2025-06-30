@@ -36,7 +36,7 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
     return (
       <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-8 text-center">
         <Music className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No albums yet</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No albums yet</h3>
         <p className="text-gray-500">
           Start building your vinyl collection by adding your first album!
         </p>
@@ -68,19 +68,19 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
 
   return (
     <>
-      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900">
+      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow dark:bg-gray-800/80">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             Your Collection ({albums.length} albums)
           </h2>
         </div>
 
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-gray-100 dark:divide-gray-700">
           {sortedArtists.map((artist, artistIndex) => (
             <div key={artist} className="p-6">
               {/* Artist Header */}
               <div className="mb-4">
-                <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
                   {artist}
                   <span className="text-sm font-normal text-gray-500 ml-2">
                     ({groupedAlbums[artist].length} album
@@ -94,7 +94,7 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
                 {groupedAlbums[artist].map((album) => (
                   <div
                     key={album.id}
-                    className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer group"
+                    className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
                     onClick={() => handleAlbumClick(album)}
                   >
                     <div className="flex-shrink-0">
@@ -119,10 +119,10 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-lg font-medium text-gray-900 truncate group-hover:text-blue-600 transition-colors">
+                      <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors">
                         {album.title}
                       </h4>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
                         {album.release_year > 0 ? album.release_year : 'Release year unknown'}
                       </p>
                     </div>
