@@ -18,6 +18,7 @@ const CollectionPage: React.FC = () => {
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState('artist-asc')
   const [filterDecade, setFilterDecade] = useState('')
+  const [filterFormat, setFilterFormat] = useState('')
   const debouncedQuery = useDebounce(query, 300)
 
   // Filter and sort albums
@@ -31,6 +32,11 @@ const CollectionPage: React.FC = () => {
     }
     if (filterDecade) {
       filtered = filtered.filter((a) => getDecade(a.release_year) === filterDecade)
+    }
+    if (filterFormat) {
+      filtered = filtered.filter(
+        (a) => (a.format || '').toLowerCase() === filterFormat.toLowerCase(),
+      )
     }
     // Sorting
     const sorted = [...filtered]
@@ -65,7 +71,7 @@ const CollectionPage: React.FC = () => {
     }
 
     return sorted
-  }, [albums, debouncedQuery, sortKey, filterDecade])
+  }, [albums, debouncedQuery, sortKey, filterDecade, filterFormat])
 
   const handleDeleteAlbum = async (id: string) => {
     try {
@@ -116,6 +122,8 @@ const CollectionPage: React.FC = () => {
           setSortKey={setSortKey}
           filterDecade={filterDecade}
           setFilterDecade={setFilterDecade}
+          filterFormat={filterFormat}
+          setFilterFormat={setFilterFormat}
         />
 
         <div className="max-w-6xl mx-auto">
