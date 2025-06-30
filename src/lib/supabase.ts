@@ -14,6 +14,7 @@ export interface Album {
   album_art_url: string
   created_at: string
   updated_at: string
+  format?: string
 }
 
 export interface Database {

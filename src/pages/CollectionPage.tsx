@@ -1,11 +1,71 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react'
 import AlbumList from '../components/AlbumList'
 import { Loader2 } from 'lucide-react'
 import { useAlbums, useDeleteAlbum } from '../hooks/useAlbums'
+import CollectionControls from '../components/CollectionControls'
+import { useDebounce } from '../hooks/useDebounce'
+
+const getDecade = (year?: number) => {
+  if (!year || year < 1950) return ''
+  return `${Math.floor(year / 10) * 10}`
+}
 
 const CollectionPage: React.FC = () => {
   const { data: albums = [], isLoading, error } = useAlbums()
   const deleteAlbumMutation = useDeleteAlbum()
+
+  // Controls state
+  const [query, setQuery] = useState('')
+  const [sortKey, setSortKey] = useState('artist-asc')
+  const [filterDecade, setFilterDecade] = useState('')
+  const debouncedQuery = useDebounce(query, 300)
+
+  // Filter and sort albums
+  const visibleAlbums = useMemo(() => {
+    let filtered = albums
+    if (debouncedQuery) {
+      const q = debouncedQuery.toLowerCase()
+      filtered = filtered.filter(
+        (a) => a.title.toLowerCase().includes(q) || a.artist.toLowerCase().includes(q),
+      )
+    }
+    if (filterDecade) {
+      filtered = filtered.filter((a) => getDecade(a.release_year) === filterDecade)
+    }
+    // Sorting
+    const sorted = [...filtered]
+
+    switch (sortKey) {
+      case 'title-asc':
+        sorted.sort((a, b) => a.title.localeCompare(b.title))
+        break
+      case 'title-desc':
+        sorted.sort((a, b) => b.title.localeCompare(a.title))
+        break
+      case 'artist-asc':
+        sorted.sort((a, b) => a.artist.localeCompare(b.artist))
+        break
+      case 'artist-desc':
+        sorted.sort((a, b) => b.artist.localeCompare(a.artist))
+        break
+      case 'year-asc':
+        sorted.sort((a, b) => (a.release_year || 0) - (b.release_year || 0))
+        break
+      case 'year-desc':
+        sorted.sort((a, b) => (b.release_year || 0) - (a.release_year || 0))
+        break
+      case 'date-asc':
+        sorted.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
+        break
+      case 'date-desc':
+        sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        break
+      default:
+        break
+    }
+
+    return sorted
+  }, [albums, debouncedQuery, sortKey, filterDecade])
 
   const handleDeleteAlbum = async (id: string) => {
     try {
@@ -49,11 +109,21 @@ const CollectionPage: React.FC = () => {
           </div>
         )}
 
+        <CollectionControls
+          query={query}
+          setQuery={setQuery}
+          sortKey={sortKey}
+          setSortKey={setSortKey}
+          filterDecade={filterDecade}
+          setFilterDecade={setFilterDecade}
+        />
+
         <div className="max-w-6xl mx-auto">
           <AlbumList
-            albums={albums}
+            albums={visibleAlbums}
             onDeleteAlbum={handleDeleteAlbum}
             onUpdateAlbum={handleUpdateAlbum}
+            sortKey={sortKey}
           />
         </div>
       </div>
