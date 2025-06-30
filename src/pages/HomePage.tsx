@@ -1,6 +1,94 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Upload, Music } from 'lucide-react'
+import { supabase } from '../lib/supabase'
+
+interface AlbumOfTheDay {
+  id: string
+  title: string
+  artist: string
+  release_year: number
+  album_art_url: string
+}
+
+const AlbumOfTheDay: React.FC = () => {
+  const [album, setAlbum] = useState<AlbumOfTheDay | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchRandomAlbum = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const { data, error } = await supabase.rpc('get_random_album')
+        if (error) {
+          setError('Failed to load album: ' + error.message)
+          setAlbum(null)
+        } else if (!data || (Array.isArray(data) && data.length === 0)) {
+          setError('No albums found. Add some albums to your collection!')
+          setAlbum(null)
+        } else {
+          // Supabase RPC may return an array or a single object
+          const albumData = Array.isArray(data) ? data[0] : data
+          setAlbum(albumData)
+        }
+      } catch (err: any) {
+        setError('Failed to load album: ' + (err.message || err.toString()))
+        setAlbum(null)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchRandomAlbum()
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="animate-pulse flex items-center gap-4 p-6 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow mb-8 max-w-xl mx-auto">
+        <div className="h-20 w-20 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+        <div className="flex-1 space-y-2">
+          <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-2/3" />
+          <div className="h-4 bg-gray-100 dark:bg-gray-700 rounded w-1/3" />
+        </div>
+      </div>
+    )
+  }
+  if (error) {
+    return (
+      <div className="bg-red-100 dark:bg-red-200/10 border border-red-400 dark:border-red-400 text-red-700 dark:text-red-300 px-4 py-3 rounded mb-8 max-w-xl mx-auto">
+        {error}
+      </div>
+    )
+  }
+  if (!album) return null
+  return (
+    <div className="flex items-center gap-4 p-6 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow mb-8 max-w-xl mx-auto">
+      <div className="h-20 w-20 flex-shrink-0">
+        {album.album_art_url ? (
+          <img
+            src={album.album_art_url}
+            alt={`${album.title} album art`}
+            className="h-20 w-20 rounded-lg object-cover"
+            onError={e => (e.currentTarget.style.display = 'none')}
+          />
+        ) : (
+          <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+            <Music className="h-10 w-10 text-gray-400" />
+          </div>
+        )}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
+          Album of the Day: {album.title}
+        </div>
+        <div className="text-gray-600 dark:text-gray-400 truncate">
+          {album.artist} {album.release_year ? `(${album.release_year})` : ''}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 const HomePage: React.FC = () => {
   return (
@@ -18,6 +106,9 @@ const HomePage: React.FC = () => {
             with automatic data from MusicBrainz.
           </p>
         </div>
+
+        {/* Album of the Day */}
+        <AlbumOfTheDay />
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* View Collection Card */}
