@@ -10,7 +10,7 @@ const Navigation: React.FC = () => {
   }
 
   return (
-    <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 sticky top-0 z-20">
+    <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 dark:bg-gray-800/80 dark:border-gray-700 sticky top-0 z-20">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
@@ -28,8 +28,8 @@ const Navigation: React.FC = () => {
               to="/collection"
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                 isActive('/collection')
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700'
               }`}
             >
               Collection
@@ -38,8 +38,8 @@ const Navigation: React.FC = () => {
               to="/add"
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1 ${
                 isActive('/add')
-                  ? 'bg-blue-100 text-blue-700'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700'
               }`}
             >
               <Plus className="h-4 w-4" />

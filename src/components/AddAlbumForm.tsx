@@ -194,12 +194,15 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   }
 
   return (
-    <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-6">
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Album</h2>
+    <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-6 dark:bg-gray-800/80">
+      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Add New Album</h2>
 
       <form onSubmit={handleSearch} className="space-y-4 mb-4">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="title"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
             Album Title *
           </label>
           <input
@@ -215,7 +218,10 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
         </div>
 
         <div>
-          <label htmlFor="artist" className="block text-sm font-medium text-gray-700 mb-1">
+          <label
+            htmlFor="artist"
+            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+          >
             Artist *
           </label>
           <input
@@ -252,7 +258,9 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
       {/* Search Results */}
       {searchResults.length > 0 && (
         <div className="mb-4">
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Select an album:</h3>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Select an album:
+          </h3>
           <div className="space-y-3">
             {searchResults.map((album: AlbumWithArt) => {
               const releaseYear = extractReleaseYear(album)
@@ -260,7 +268,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                 <button
                   key={album.id}
                   onClick={() => handleSelectAlbum(album)}
-                  className="w-full text-left p-3 border border-gray-200 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-3"
+                  className="w-full text-left p-3 border border-gray-200 rounded-md hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-3"
                 >
                   <div className="flex-shrink-0">
                     {album.coverArtUrl ? (
@@ -284,8 +292,10 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="font-medium text-gray-900 truncate">{album.title}</div>
-                    <div className="text-sm text-gray-500">
+                    <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                      {album.title}
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
                       {releaseYear > 0 ? `Released: ${releaseYear}` : 'Release date unknown'}
                     </div>
                   </div>
