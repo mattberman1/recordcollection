@@ -30,7 +30,7 @@ const AddAlbumPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-800 mb-2">Add Albums</h1>
@@ -46,7 +46,7 @@ const AddAlbumPage: React.FC = () => {
 
         <div className="max-w-2xl mx-auto">
           {/* Tab Navigation */}
-          <div className="bg-white rounded-lg shadow mb-6">
+          <div className="bg-white/80 backdrop-blur-md rounded-xl shadow mb-6">
             <div className="flex border-b border-gray-200">
               <button
                 onClick={() => setActiveTab('single')}

@@ -193,7 +193,7 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">Add New Album</h2>
 
       <form onSubmit={handleSearch} className="space-y-4 mb-4">
