@@ -18,6 +18,8 @@ A modern web application for cataloging and managing your vinyl record collectio
 - **Database**: Supabase (PostgreSQL)
 - **Icons**: Lucide React
 - **HTTP Client**: Axios
+- **State Management**: React Query (TanStack Query)
+- **Code Quality**: ESLint, Prettier
 
 ## Getting Started
 
@@ -86,6 +88,15 @@ npm start
 
 The app will open at [http://localhost:3000](http://localhost:3000).
 
+## Development Scripts
+
+- `npm start` - Start the development server
+- `npm run build` - Build the app for production
+- `npm test` - Run tests with Jest
+- `npm run lint` - Run ESLint to check for code issues
+- `npm run lint:fix` - Run ESLint and automatically fix issues
+- `npm run format` - Format code with Prettier
+
 ## Usage
 
 1. **Adding Albums**: Use the form on the left to add new albums to your collection
@@ -98,11 +109,18 @@ The app will open at [http://localhost:3000](http://localhost:3000).
 src/
 ├── components/          # React components
 │   ├── AddAlbumForm.tsx # Form for adding new albums
-│   └── AlbumList.tsx    # Component to display album list
+│   ├── AlbumList.tsx    # Component to display album list
+│   └── AlbumDetailModal.tsx # Modal for album details
+├── hooks/               # Custom React hooks
+│   └── useAlbums.ts     # React Query hooks for album operations
 ├── lib/
 │   └── supabase.ts      # Supabase client configuration
+├── pages/               # Page components
+│   ├── HomePage.tsx     # Home page
+│   ├── AddAlbumPage.tsx # Add album page
+│   └── CollectionPage.tsx # Collection page
 ├── services/
-│   └── albumService.ts  # Database operations
+│   └── albumService.ts  # Database operations (legacy)
 ├── App.tsx              # Main app component
 ├── index.tsx            # App entry point
 └── index.css            # Global styles

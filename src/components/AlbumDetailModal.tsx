@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Album } from '../lib/supabase'
 import { albumService } from '../services/albumService'
+import { useDeleteAlbum } from '../hooks/useAlbums'
 import { X, Edit, Save, Trash2, Music, Calendar, User, Upload } from 'lucide-react'
 
 interface AlbumDetailModalProps {
@@ -21,11 +22,11 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
   const [isEditing, setIsEditing] = useState(false)
   const [editedAlbum, setEditedAlbum] = useState<Album | null>(null)
   const [isSaving, setIsSaving] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
   const [uploadMethod, setUploadMethod] = useState<'url' | 'file'>('url')
   const [uploadedImageUrl, setUploadedImageUrl] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const deleteAlbumMutation = useDeleteAlbum()
 
   useEffect(() => {
     if (album) {
@@ -67,14 +68,11 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
     }
 
     try {
-      setIsDeleting(true)
-      await albumService.deleteAlbum(album.id)
+      await deleteAlbumMutation.mutateAsync(album.id)
       onDelete(album.id)
       onClose()
     } catch (error) {
       console.error('Failed to delete album:', error)
-    } finally {
-      setIsDeleting(false)
     }
   }
 
@@ -205,32 +203,50 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                           : 'bg-gray-50 text-gray-600 border border-gray-300 hover:bg-gray-200'
                       }`}
                     >
-                      Upload
+                      File
                     </button>
                   </div>
 
                   {/* URL Input */}
                   {uploadMethod === 'url' && (
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Cover Art URL
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Album Art URL
                       </label>
                       <input
                         type="url"
                         value={editedAlbum.album_art_url || ''}
                         onChange={(e) => handleInputChange('album_art_url', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                        placeholder="https://example.com/cover.jpg"
+                        placeholder="https://example.com/album-art.jpg"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                       />
                     </div>
                   )}
 
                   {/* File Upload */}
                   {uploadMethod === 'file' && (
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Upload Image
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Upload Album Art
                       </label>
+                      <button
+                        type="button"
+                        onClick={handleUploadClick}
+                        disabled={isUploading}
+                        className="w-full px-4 py-2 border-2 border-dashed border-gray-300 rounded-md hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                      >
+                        {isUploading ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                            <span>Uploading...</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center justify-center space-x-2">
+                            <Upload className="h-5 w-5" />
+                            <span>Choose Image</span>
+                          </div>
+                        )}
+                      </button>
                       <input
                         ref={fileInputRef}
                         type="file"
@@ -238,188 +254,131 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
                         onChange={handleFileUpload}
                         className="hidden"
                       />
-                      <button
-                        onClick={handleUploadClick}
-                        disabled={isUploading}
-                        className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-md hover:border-blue-400 hover:bg-blue-50 transition-colors disabled:opacity-50 flex items-center justify-center space-x-2"
-                      >
-                        {isUploading ? (
-                          <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                            <span>Uploading...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Upload className="h-5 w-5 text-gray-400" />
-                            <span>Click to upload image</span>
-                          </>
-                        )}
-                      </button>
-                      <p className="text-xs text-gray-500">
-                        Supported formats: JPEG, PNG, GIF. Max size: 5MB
-                      </p>
-                    </div>
-                  )}
-
-                  {/* Uploaded Image Preview */}
-                  {uploadedImageUrl && uploadMethod === 'file' && (
-                    <div className="space-y-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Uploaded Image
-                      </label>
-                      <div className="relative">
-                        <img
-                          src={uploadedImageUrl}
-                          alt="Uploaded cover art"
-                          className="w-full h-32 object-cover rounded-md border border-gray-300"
-                        />
-                        <button
-                          onClick={() => setUploadedImageUrl(null)}
-                          className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
-                          title="Remove uploaded image"
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
-                      </div>
                     </div>
                   )}
                 </div>
               )}
             </div>
 
-            {/* Album Information */}
+            {/* Album Details */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-800">Album Information</h3>
+              <h3 className="text-lg font-semibold text-gray-800">Album Details</h3>
 
-              <div className="space-y-4">
-                {/* Title */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedAlbum.title}
-                      onChange={(e) => handleInputChange('title', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <div className="flex items-center space-x-2 text-gray-800">
-                      <Music className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{editedAlbum.title}</span>
-                    </div>
-                  )}
-                </div>
+              {/* Title */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Music className="h-4 w-4 inline mr-1" />
+                  Title
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedAlbum.title}
+                    onChange={(e) => handleInputChange('title', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900 font-medium">{editedAlbum.title}</p>
+                )}
+              </div>
 
-                {/* Artist */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Artist</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      value={editedAlbum.artist}
-                      onChange={(e) => handleInputChange('artist', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                  ) : (
-                    <div className="flex items-center space-x-2 text-gray-800">
-                      <User className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{editedAlbum.artist}</span>
-                    </div>
-                  )}
-                </div>
+              {/* Artist */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <User className="h-4 w-4 inline mr-1" />
+                  Artist
+                </label>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={editedAlbum.artist}
+                    onChange={(e) => handleInputChange('artist', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900 font-medium">{editedAlbum.artist}</p>
+                )}
+              </div>
 
-                {/* Release Year */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Release Year
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="number"
-                      value={editedAlbum.release_year || ''}
-                      onChange={(e) =>
-                        handleInputChange('release_year', parseInt(e.target.value) || 0)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      min="1900"
-                      max={new Date().getFullYear()}
-                    />
-                  ) : (
-                    <div className="flex items-center space-x-2 text-gray-800">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <span className="font-medium">{editedAlbum.release_year || 'Unknown'}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Metadata */}
-                <div className="pt-4 space-y-2">
-                  <div className="text-sm text-gray-500">
-                    <span className="font-medium">Added:</span>{' '}
-                    {new Date(editedAlbum.created_at).toLocaleDateString()}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    <span className="font-medium">Last Updated:</span>{' '}
-                    {new Date(editedAlbum.updated_at).toLocaleDateString()}
-                  </div>
-                </div>
+              {/* Release Year */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <Calendar className="h-4 w-4 inline mr-1" />
+                  Release Year
+                </label>
+                {isEditing ? (
+                  <input
+                    type="number"
+                    value={editedAlbum.release_year || ''}
+                    onChange={(e) =>
+                      handleInputChange('release_year', parseInt(e.target.value) || 0)
+                    }
+                    min="1900"
+                    max={new Date().getFullYear()}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900 font-medium">
+                    {editedAlbum.release_year || 'Unknown'}
+                  </p>
+                )}
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="flex items-center justify-between p-6 border-t border-gray-200">
-          <div className="flex space-x-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={() => {
-                    setIsEditing(false)
-                    setUploadedImageUrl(null)
-                  }}
-                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-                  disabled={isSaving}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center space-x-2"
-                >
-                  {isSaving ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      <span>Saving...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Save className="h-4 w-4" />
-                      <span>Save Changes</span>
-                    </>
-                  )}
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="px-4 py-2 text-red-600 border border-red-300 rounded-md hover:bg-red-50 transition-colors disabled:opacity-50 flex items-center space-x-2"
-              >
-                {isDeleting ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-red-600"></div>
-                    <span>Deleting...</span>
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="h-4 w-4" />
-                    <span>Delete Album</span>
-                  </>
-                )}
-              </button>
-            )}
+          {/* Actions */}
+          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
+            <div className="flex items-center space-x-2">
+              {isEditing && (
+                <>
+                  <button
+                    onClick={handleSave}
+                    disabled={isSaving}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 flex items-center space-x-2"
+                  >
+                    {isSaving ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Save className="h-4 w-4" />
+                        <span>Save Changes</span>
+                      </>
+                    )}
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsEditing(false)
+                      setEditedAlbum({ ...album })
+                      setUploadedImageUrl(null)
+                    }}
+                    className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+
+            <button
+              onClick={handleDelete}
+              disabled={deleteAlbumMutation.isPending}
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 disabled:opacity-50 flex items-center space-x-2"
+            >
+              {deleteAlbumMutation.isPending ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  <span>Deleting...</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="h-4 w-4" />
+                  <span>Delete Album</span>
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>

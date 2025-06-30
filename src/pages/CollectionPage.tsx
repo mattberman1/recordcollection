@@ -1,51 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import { Album } from '../lib/supabase'
-import { albumService } from '../services/albumService'
+import React from 'react'
 import AlbumList from '../components/AlbumList'
 import { Loader2 } from 'lucide-react'
+import { useAlbums, useDeleteAlbum } from '../hooks/useAlbums'
 
 const CollectionPage: React.FC = () => {
-  const [albums, setAlbums] = useState<Album[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    loadAlbums()
-  }, [])
-
-  const loadAlbums = async () => {
-    try {
-      setLoading(true)
-      const data = await albumService.getAllAlbums()
-      setAlbums(data)
-    } catch (err) {
-      setError('Failed to load albums')
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }
+  const { data: albums = [], isLoading, error } = useAlbums()
+  const deleteAlbumMutation = useDeleteAlbum()
 
   const handleDeleteAlbum = async (id: string) => {
     try {
-      await albumService.deleteAlbum(id)
-      setAlbums(albums.filter((album) => album.id !== id))
+      await deleteAlbumMutation.mutateAsync(id)
     } catch (err) {
-      setError('Failed to delete album')
-      console.error(err)
+      // Optionally handle error UI
+      console.error('Failed to delete album', err)
     }
   }
 
-  const handleUpdateAlbum = async (updatedAlbum: Album) => {
-    try {
-      setAlbums(albums.map((album) => (album.id === updatedAlbum.id ? updatedAlbum : album)))
-    } catch (err) {
-      setError('Failed to update album')
-      console.error(err)
-    }
+  const handleUpdateAlbum = async (updatedAlbum: any) => {
+    // This can be handled via optimistic update or refetch, depending on your update logic
   }
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -68,7 +43,7 @@ const CollectionPage: React.FC = () => {
 
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 max-w-4xl mx-auto">
-            {error}
+            {error.message}
           </div>
         )}
 
