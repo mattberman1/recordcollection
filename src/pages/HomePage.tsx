@@ -70,7 +70,7 @@ const AlbumOfTheDay: React.FC = () => {
             src={album.album_art_url}
             alt={`${album.title} album art`}
             className="h-20 w-20 rounded-lg object-cover"
-            onError={e => (e.currentTarget.style.display = 'none')}
+            onError={(e) => (e.currentTarget.style.display = 'none')}
           />
         ) : (
           <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
