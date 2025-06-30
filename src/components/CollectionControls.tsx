@@ -42,7 +42,7 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
 }) => {
   return (
     <section
-      className="bg-white/80 border border-gray-200 shadow-sm rounded-xl mb-8 sticky top-0 z-10 max-w-6xl mx-auto"
+      className="bg-white/80 backdrop-blur-md border border-gray-200 shadow-sm rounded-xl mb-8 sticky top-0 z-10 max-w-6xl mx-auto dark:bg-gray-800/80 dark:border-gray-700"
       aria-label="Album filters toolbar"
       style={{
         fontFamily:
@@ -56,7 +56,7 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search title or artist…"
           aria-label="Search title or artist"
-          className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 placeholder-gray-400 w-full md:w-64 transition-all"
+          className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 placeholder-gray-400 w-full md:w-64 transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
         />
         <div className="flex flex-row gap-3 flex-1">
           <div className="flex-1">
@@ -68,7 +68,7 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
               value={sortKey}
               onChange={(e) => setSortKey(e.target.value)}
               aria-label="Sort by"
-              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all"
+              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             >
               {sortOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -86,7 +86,7 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
               value={filterDecade}
               onChange={(e) => setFilterDecade(e.target.value)}
               aria-label="Filter by decade"
-              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all"
+              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             >
               {decadeOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
