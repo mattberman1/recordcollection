@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Disc, Plus } from 'lucide-react'
+import { Plus } from 'lucide-react'
 
 const Navigation: React.FC = () => {
   const location = useLocation()
@@ -18,7 +18,7 @@ const Navigation: React.FC = () => {
             to="/"
             className="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
           >
-            <Disc className="h-8 w-8 text-blue-600" />
+            <img src="/logo.png" alt="Vinyl Catalog Logo" className="h-8 w-8 rounded" />
             <span>Vinyl Catalog</span>
           </Link>
 
