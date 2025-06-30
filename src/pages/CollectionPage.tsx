@@ -18,17 +18,7 @@ const CollectionPage: React.FC = () => {
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState('artist-asc')
   const [filterDecade, setFilterDecade] = useState('')
-  const [filterFormat, setFilterFormat] = useState('')
   const debouncedQuery = useDebounce(query, 300)
-
-  // Extract unique formats from albums
-  const formatOptions = useMemo(() => {
-    const set = new Set<string>()
-    albums.forEach((a) => {
-      if (a.format) set.add(a.format)
-    })
-    return Array.from(set).sort()
-  }, [albums])
 
   // Filter and sort albums
   const visibleAlbums = useMemo(() => {
@@ -42,11 +32,9 @@ const CollectionPage: React.FC = () => {
     if (filterDecade) {
       filtered = filtered.filter((a) => getDecade(a.release_year) === filterDecade)
     }
-    if (filterFormat) {
-      filtered = filtered.filter((a) => a.format === filterFormat)
-    }
     // Sorting
     const sorted = [...filtered]
+
     switch (sortKey) {
       case 'title-asc':
         sorted.sort((a, b) => a.title.localeCompare(b.title))
@@ -75,8 +63,9 @@ const CollectionPage: React.FC = () => {
       default:
         break
     }
+
     return sorted
-  }, [albums, debouncedQuery, sortKey, filterDecade, filterFormat])
+  }, [albums, debouncedQuery, sortKey, filterDecade])
 
   const handleDeleteAlbum = async (id: string) => {
     try {
@@ -125,9 +114,6 @@ const CollectionPage: React.FC = () => {
           setSortKey={setSortKey}
           filterDecade={filterDecade}
           setFilterDecade={setFilterDecade}
-          filterFormat={filterFormat}
-          setFilterFormat={setFilterFormat}
-          formatOptions={formatOptions}
         />
 
         <div className="max-w-6xl mx-auto">
@@ -135,6 +121,7 @@ const CollectionPage: React.FC = () => {
             albums={visibleAlbums}
             onDeleteAlbum={handleDeleteAlbum}
             onUpdateAlbum={handleUpdateAlbum}
+            sortKey={sortKey}
           />
         </div>
       </div>

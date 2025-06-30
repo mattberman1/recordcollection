@@ -7,9 +7,6 @@ interface CollectionControlsProps {
   setSortKey: (k: string) => void
   filterDecade: string
   setFilterDecade: (d: string) => void
-  filterFormat: string
-  setFilterFormat: (f: string) => void
-  formatOptions: string[]
 }
 
 const sortOptions = [
@@ -42,58 +39,65 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
   setSortKey,
   filterDecade,
   setFilterDecade,
-  filterFormat,
-  setFilterFormat,
-  formatOptions,
 }) => {
   return (
-    <div className="flex flex-row gap-4 items-center sticky top-0 bg-white/80 z-10 p-4 rounded-xl shadow mb-6">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search title or artist…"
-        aria-label="Search title or artist"
-        className="min-h-10 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
-      />
-      <select
-        value={sortKey}
-        onChange={(e) => setSortKey(e.target.value)}
-        aria-label="Sort by"
-        className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
-      >
-        {sortOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <select
-        value={filterDecade}
-        onChange={(e) => setFilterDecade(e.target.value)}
-        aria-label="Filter by decade"
-        className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
-      >
-        {decadeOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-      <select
-        value={filterFormat}
-        onChange={(e) => setFilterFormat(e.target.value)}
-        aria-label="Filter by format"
-        className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
-      >
-        <option value="">All Formats</option>
-        {formatOptions.map((f) => (
-          <option key={f} value={f}>
-            {f}
-          </option>
-        ))}
-      </select>
-    </div>
+    <section
+      className="bg-white/80 border border-gray-200 shadow-sm rounded-xl mb-8 sticky top-0 z-10 max-w-6xl mx-auto"
+      aria-label="Album filters toolbar"
+      style={{
+        fontFamily:
+          'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+      }}
+    >
+      <div className="flex flex-col md:flex-row gap-3 md:gap-6 items-stretch px-4 py-3">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search title or artist…"
+          aria-label="Search title or artist"
+          className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 placeholder-gray-400 w-full md:w-64 transition-all"
+        />
+        <div className="flex flex-row gap-3 flex-1">
+          <div className="flex-1">
+            <label htmlFor="sort" className="sr-only">
+              Sort by
+            </label>
+            <select
+              id="sort"
+              value={sortKey}
+              onChange={(e) => setSortKey(e.target.value)}
+              aria-label="Sort by"
+              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all"
+            >
+              {sortOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1">
+            <label htmlFor="decade" className="sr-only">
+              Filter by decade
+            </label>
+            <select
+              id="decade"
+              value={filterDecade}
+              onChange={(e) => setFilterDecade(e.target.value)}
+              aria-label="Filter by decade"
+              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all"
+            >
+              {decadeOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
+    </section>
   )
 }
 
