@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Plus, Upload, Music } from 'lucide-react'
+import { Plus, Music } from 'lucide-react'
+import AlbumOfTheDay from '../components/AlbumOfTheDay'
 
 const HomePage: React.FC = () => {
   return (
@@ -18,6 +19,8 @@ const HomePage: React.FC = () => {
             with automatic data from MusicBrainz.
           </p>
         </div>
+
+        <AlbumOfTheDay />
 
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* View Collection Card */}
@@ -53,48 +56,6 @@ const HomePage: React.FC = () => {
               and release information.
             </p>
           </Link>
-        </div>
-
-        {/* Features Section */}
-        <div className="mt-20 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100 text-center mb-12">
-            Features
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-full mb-4 mx-auto">
-                <Music className="h-6 w-6 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                Smart Search
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Search MusicBrainz database for automatic album data and cover art
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4 mx-auto">
-                <Upload className="h-6 w-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                Bulk Import
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Import multiple albums at once using CSV files
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
-                <img src="/logo.png" alt="Vinyl Catalog Logo" className="h-6 w-6" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                Organized View
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Collection organized by artist with release year sorting
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </div>
