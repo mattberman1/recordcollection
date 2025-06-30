@@ -1,6 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Disc, Plus, Upload, Music } from 'lucide-react';
+import React from 'react'
+import { Link } from 'react-router-dom'
+import { Disc, Plus, Upload, Music } from 'lucide-react'
 
 const HomePage: React.FC = () => {
   return (
@@ -12,7 +12,8 @@ const HomePage: React.FC = () => {
           </div>
           <h1 className="text-5xl font-bold text-gray-800 mb-4">Vinyl Catalog</h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Manage your vinyl record collection with ease. Search, organize, and track your albums with automatic data from MusicBrainz.
+            Manage your vinyl record collection with ease. Search, organize, and track your albums
+            with automatic data from MusicBrainz.
           </p>
         </div>
 
@@ -25,9 +26,12 @@ const HomePage: React.FC = () => {
             <div className="flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6 mx-auto group-hover:bg-blue-200 transition-colors">
               <Music className="h-8 w-8 text-blue-600" />
             </div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-3 text-center">View Collection</h2>
+            <h2 className="text-2xl font-semibold text-gray-800 mb-3 text-center">
+              View Collection
+            </h2>
             <p className="text-gray-600 text-center">
-              Browse your vinyl collection organized by artist. See album covers, release years, and manage your records.
+              Browse your vinyl collection organized by artist. See album covers, release years, and
+              manage your records.
             </p>
           </Link>
 
@@ -41,7 +45,8 @@ const HomePage: React.FC = () => {
             </div>
             <h2 className="text-2xl font-semibold text-gray-800 mb-3 text-center">Add Albums</h2>
             <p className="text-gray-600 text-center">
-              Add albums one by one or bulk import from CSV. Automatic data fetching with cover art and release information.
+              Add albums one by one or bulk import from CSV. Automatic data fetching with cover art
+              and release information.
             </p>
           </Link>
         </div>
@@ -64,9 +69,7 @@ const HomePage: React.FC = () => {
                 <Upload className="h-6 w-6 text-green-600" />
               </div>
               <h3 className="text-lg font-semibold text-gray-800 mb-2">Bulk Import</h3>
-              <p className="text-gray-600">
-                Import multiple albums at once using CSV files
-              </p>
+              <p className="text-gray-600">Import multiple albums at once using CSV files</p>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-full mb-4 mx-auto">
@@ -81,7 +84,7 @@ const HomePage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default HomePage; 
+export default HomePage

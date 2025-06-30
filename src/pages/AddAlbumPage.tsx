@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { Album } from '../lib/supabase';
-import { albumService } from '../services/albumService';
-import AddAlbumForm from '../components/AddAlbumForm';
-import CSVImport from '../components/CSVImport';
-import { Plus, Upload, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react'
+import { Album } from '../lib/supabase'
+import { albumService } from '../services/albumService'
+import AddAlbumForm from '../components/AddAlbumForm'
+import CSVImport from '../components/CSVImport'
+import { Plus, Upload, CheckCircle } from 'lucide-react'
 
 const AddAlbumPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single');
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single')
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
 
   const handleAddAlbum = async (album: Omit<Album, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      await albumService.addAlbum(album);
-      setSuccessMessage(`"${album.title}" by ${album.artist} added successfully!`);
-      setTimeout(() => setSuccessMessage(null), 3000);
+      await albumService.addAlbum(album)
+      setSuccessMessage(`"${album.title}" by ${album.artist} added successfully!`)
+      setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
-      console.error('Failed to add album:', error);
+      console.error('Failed to add album:', error)
     }
-  };
+  }
 
   const handleAddAlbums = async (albums: Omit<Album, 'id' | 'created_at' | 'updated_at'>[]) => {
     try {
-      await albumService.addAlbums(albums);
-      setSuccessMessage(`${albums.length} albums added successfully!`);
-      setTimeout(() => setSuccessMessage(null), 3000);
+      await albumService.addAlbums(albums)
+      setSuccessMessage(`${albums.length} albums added successfully!`)
+      setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
-      console.error('Failed to add albums:', error);
+      console.error('Failed to add albums:', error)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -82,7 +82,7 @@ const AddAlbumPage: React.FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default AddAlbumPage; 
+export default AddAlbumPage

@@ -1,11 +1,11 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navigation from './components/Navigation';
-import HomePage from './pages/HomePage';
-import AddAlbumPage from './pages/AddAlbumPage';
-import CollectionPage from './pages/CollectionPage';
-import ErrorBoundary from './components/ErrorBoundary';
-import './App.css';
+import React from 'react'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import Navigation from './components/Navigation'
+import HomePage from './pages/HomePage'
+import AddAlbumPage from './pages/AddAlbumPage'
+import CollectionPage from './pages/CollectionPage'
+import ErrorBoundary from './components/ErrorBoundary'
+import './App.css'
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
         </div>
       </Router>
     </ErrorBoundary>
-  );
+  )
 }
 
-export default App; 
+export default App

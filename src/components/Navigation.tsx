@@ -1,20 +1,23 @@
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { Disc, Plus } from 'lucide-react';
+import React from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { Disc, Plus } from 'lucide-react'
 
 const Navigation: React.FC = () => {
-  const location = useLocation();
+  const location = useLocation()
 
   const isActive = (path: string) => {
-    return location.pathname === path;
-  };
+    return location.pathname === path
+  }
 
   return (
     <nav className="bg-white/80 backdrop-blur-md shadow-sm border-b border-gray-200 sticky top-0 z-20">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <Link to="/" className="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors">
+          <Link
+            to="/"
+            className="flex items-center space-x-2 text-xl font-bold text-gray-800 hover:text-blue-600 transition-colors"
+          >
             <Disc className="h-8 w-8 text-blue-600" />
             <span>Vinyl Catalog</span>
           </Link>
@@ -46,7 +49,7 @@ const Navigation: React.FC = () => {
         </div>
       </div>
     </nav>
-  );
-};
+  )
+}
 
-export default Navigation; 
+export default Navigation

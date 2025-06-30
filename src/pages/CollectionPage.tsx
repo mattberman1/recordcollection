@@ -1,51 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { Album } from '../lib/supabase';
-import { albumService } from '../services/albumService';
-import AlbumList from '../components/AlbumList';
-import { Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import { Album } from '../lib/supabase'
+import { albumService } from '../services/albumService'
+import AlbumList from '../components/AlbumList'
+import { Loader2 } from 'lucide-react'
 
 const CollectionPage: React.FC = () => {
-  const [albums, setAlbums] = useState<Album[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [albums, setAlbums] = useState<Album[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    loadAlbums();
-  }, []);
+    loadAlbums()
+  }, [])
 
   const loadAlbums = async () => {
     try {
-      setLoading(true);
-      const data = await albumService.getAllAlbums();
-      setAlbums(data);
+      setLoading(true)
+      const data = await albumService.getAllAlbums()
+      setAlbums(data)
     } catch (err) {
-      setError('Failed to load albums');
-      console.error(err);
+      setError('Failed to load albums')
+      console.error(err)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleDeleteAlbum = async (id: string) => {
     try {
-      await albumService.deleteAlbum(id);
-      setAlbums(albums.filter(album => album.id !== id));
+      await albumService.deleteAlbum(id)
+      setAlbums(albums.filter((album) => album.id !== id))
     } catch (err) {
-      setError('Failed to delete album');
-      console.error(err);
+      setError('Failed to delete album')
+      console.error(err)
     }
-  };
+  }
 
   const handleUpdateAlbum = async (updatedAlbum: Album) => {
     try {
-      setAlbums(albums.map(album => 
-        album.id === updatedAlbum.id ? updatedAlbum : album
-      ));
+      setAlbums(albums.map((album) => (album.id === updatedAlbum.id ? updatedAlbum : album)))
     } catch (err) {
-      setError('Failed to update album');
-      console.error(err);
+      setError('Failed to update album')
+      console.error(err)
     }
-  };
+  }
 
   if (loading) {
     return (
@@ -55,7 +53,7 @@ const CollectionPage: React.FC = () => {
           <div className="text-xl">Loading your vinyl collection...</div>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -75,15 +73,15 @@ const CollectionPage: React.FC = () => {
         )}
 
         <div className="max-w-6xl mx-auto">
-          <AlbumList 
-            albums={albums} 
+          <AlbumList
+            albums={albums}
             onDeleteAlbum={handleDeleteAlbum}
             onUpdateAlbum={handleUpdateAlbum}
           />
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default CollectionPage; 
+export default CollectionPage

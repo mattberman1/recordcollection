@@ -8,30 +8,23 @@ export const albumService = {
       .from('albums')
       .select('*')
       .order('created_at', { ascending: false })
-    
+
     if (error) throw error
     return data || []
   },
 
   // Add a new album
   async addAlbum(album: Omit<Album, 'id' | 'created_at' | 'updated_at'>): Promise<Album> {
-    const { data, error } = await supabase
-      .from('albums')
-      .insert(album)
-      .select()
-      .single()
-    
+    const { data, error } = await supabase.from('albums').insert(album).select().single()
+
     if (error) throw error
     return data
   },
 
   // Add multiple albums (bulk import)
   async addAlbums(albums: Omit<Album, 'id' | 'created_at' | 'updated_at'>[]): Promise<Album[]> {
-    const { data, error } = await supabase
-      .from('albums')
-      .insert(albums)
-      .select()
-    
+    const { data, error } = await supabase.from('albums').insert(albums).select()
+
     if (error) throw error
     return data || []
   },
@@ -44,18 +37,15 @@ export const albumService = {
       .eq('id', id)
       .select()
       .single()
-    
+
     if (error) throw error
     return data
   },
 
   // Delete an album
   async deleteAlbum(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('albums')
-      .delete()
-      .eq('id', id)
-    
+    const { error } = await supabase.from('albums').delete().eq('id', id)
+
     if (error) throw error
   },
 
@@ -66,8 +56,8 @@ export const albumService = {
       .select('*')
       .or(`title.ilike.%${query}%,artist.ilike.%${query}%`)
       .order('title')
-    
+
     if (error) throw error
     return data || []
-  }
-} 
+  },
+}
