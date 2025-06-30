@@ -36,9 +36,7 @@ const CollectionPage: React.FC = () => {
     if (debouncedQuery) {
       const q = debouncedQuery.toLowerCase()
       filtered = filtered.filter(
-        (a) =>
-          a.title.toLowerCase().includes(q) ||
-          a.artist.toLowerCase().includes(q)
+        (a) => a.title.toLowerCase().includes(q) || a.artist.toLowerCase().includes(q),
       )
     }
     if (filterDecade) {

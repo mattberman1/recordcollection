@@ -76,4 +76,4 @@ describe('CollectionPage', () => {
     const titles = allTitles.map((el) => el.textContent)
     expect(titles).toEqual(expect.arrayContaining(['Kind of Blue', 'Discovery', 'Abbey Road']))
   })
-}) 
+})

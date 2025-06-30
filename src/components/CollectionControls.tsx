@@ -51,44 +51,50 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
       <input
         type="text"
         value={query}
-        onChange={e => setQuery(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder="Search title or artist…"
         aria-label="Search title or artist"
         className="min-h-10 rounded-xl border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
       />
       <select
         value={sortKey}
-        onChange={e => setSortKey(e.target.value)}
+        onChange={(e) => setSortKey(e.target.value)}
         aria-label="Sort by"
         className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
       >
-        {sortOptions.map(opt => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        {sortOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
         ))}
       </select>
       <select
         value={filterDecade}
-        onChange={e => setFilterDecade(e.target.value)}
+        onChange={(e) => setFilterDecade(e.target.value)}
         aria-label="Filter by decade"
         className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
       >
-        {decadeOptions.map(opt => (
-          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        {decadeOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
         ))}
       </select>
       <select
         value={filterFormat}
-        onChange={e => setFilterFormat(e.target.value)}
+        onChange={(e) => setFilterFormat(e.target.value)}
         aria-label="Filter by format"
         className="min-h-10 rounded-xl border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none dark:bg-gray-900 dark:text-white"
       >
         <option value="">All Formats</option>
-        {formatOptions.map(f => (
-          <option key={f} value={f}>{f}</option>
+        {formatOptions.map((f) => (
+          <option key={f} value={f}>
+            {f}
+          </option>
         ))}
       </select>
     </div>
   )
 }
 
-export default CollectionControls 
+export default CollectionControls
