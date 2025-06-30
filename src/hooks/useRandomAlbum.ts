@@ -2,12 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase, Album } from '../lib/supabase'
 
 const fetchRandomAlbum = async (): Promise<Album | null> => {
-  const { data, error } = await supabase.rpc<Album[]>('get_random_album')
-  if (error) {
-    console.error('failed to fetch random album', error)
-    return null
-  }
-  return data?.[0] ?? null
+  const { data, error } = await supabase.rpc('get_random_album').single()
+  if (error && error.code !== 'PGRST116') throw error
+  return (data as Album) ?? null
 }
 
 export const useRandomAlbum = () =>
