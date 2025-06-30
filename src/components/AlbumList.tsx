@@ -37,7 +37,7 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
     return (
       <div className="bg-white/80 backdrop-blur-md rounded-xl shadow p-8 text-center">
         <Music className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">No albums yet</h3>
+        <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">No albums yet</h3>
         <p className="text-gray-500">
           Start building your vinyl collection by adding your first album!
         </p>
@@ -170,38 +170,76 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
   // Show albums in a flat list when sorting by non-artist criteria
   return (
     <>
-      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-900 text-left">
+
+      <div className="bg-white/80 backdrop-blur-md rounded-xl shadow dark:bg-gray-800/80">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             Your Collection ({albums.length} albums)
           </h2>
         </div>
 
-        <div className="divide-y divide-gray-100">
-          {albums.map((album) => (
-            <div
-              key={album.id}
-              className="flex items-center justify-between space-x-4 p-6 hover:bg-gray-50 transition-colors cursor-pointer group"
-              onClick={() => handleAlbumClick(album)}
-            >
-              <div className="flex items-center space-x-4 flex-1 min-w-0">
-                <div className="flex-shrink-0">
-                  {album.album_art_url ? (
-                    <img
-                      className="h-16 w-16 rounded-lg object-cover"
-                      src={album.album_art_url}
-                      alt={`${album.title} album art`}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                        target.nextElementSibling?.classList.remove('hidden')
-                      }}
-                    />
-                  ) : null}
+        <div className="divide-y divide-gray-100 dark:divide-gray-700">
+          {sortedArtists.map((artist, artistIndex) => (
+            <div key={artist} className="p-6">
+              {/* Artist Header */}
+              <div className="mb-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700 pb-2">
+                  {artist}
+                  <span className="text-sm font-normal text-gray-500 ml-2">
+                    ({groupedAlbums[artist].length} album
+                    {groupedAlbums[artist].length !== 1 ? 's' : ''})
+                  </span>
+                </h3>
+              </div>
+
+              {/* Albums for this artist */}
+              <div className="space-y-3">
+                {groupedAlbums[artist].map((album) => (
                   <div
-                    className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${album.album_art_url ? 'hidden' : ''}`}
+                    key={album.id}
+                    className="flex items-center space-x-4 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors cursor-pointer group"
+                    onClick={() => handleAlbumClick(album)}
                   >
-                    <Music className="h-8 w-8 text-gray-400" />
+                    <div className="flex-shrink-0">
+                      {album.album_art_url ? (
+                        <img
+                          className="h-16 w-16 rounded-lg object-cover"
+                          src={album.album_art_url}
+                          alt={`${album.title} album art`}
+                          onError={(e) => {
+                            // Fallback to placeholder if image fails to load
+                            const target = e.target as HTMLImageElement
+                            target.style.display = 'none'
+                            target.nextElementSibling?.classList.remove('hidden')
+                          }}
+                        />
+                      ) : null}
+                      <div
+                        className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${album.album_art_url ? 'hidden' : ''}`}
+                      >
+                        <Music className="h-8 w-8 text-gray-400" />
+                      </div>
+                    </div>
+
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors">
+                        {album.title}
+                      </h4>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {album.release_year > 0 ? album.release_year : 'Release year unknown'}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation() // Prevent modal from opening
+                        onDeleteAlbum(album.id)
+                      }}
+                      className="flex-shrink-0 p-2 text-gray-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                      title="Delete album"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
                 <div className="flex-1 min-w-0 flex flex-row items-center">

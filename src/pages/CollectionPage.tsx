@@ -82,7 +82,7 @@ const CollectionPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-blue-600" />
           <div className="text-xl">Loading your vinyl collection...</div>
@@ -92,17 +92,19 @@ const CollectionPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-800 mb-2">Your Collection</h1>
-          <p className="text-gray-600">
+          <h1 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+            Your Collection
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
             {albums.length} album{albums.length !== 1 ? 's' : ''} in your vinyl collection
           </p>
         </header>
 
         {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-6 max-w-4xl mx-auto">
+          <div className="bg-red-100 border border-red-400 text-red-700 dark:bg-red-200/10 dark:border-red-400 dark:text-red-300 px-4 py-3 rounded mb-6 max-w-4xl mx-auto">
             {error.message}
           </div>
         )}
