@@ -7,6 +7,8 @@ interface CollectionControlsProps {
   setSortKey: (k: string) => void
   filterDecade: string
   setFilterDecade: (d: string) => void
+  filterFormat: string
+  setFilterFormat: (f: string) => void
 }
 
 const sortOptions = [
@@ -32,6 +34,14 @@ const decadeOptions = [
   { value: '1950', label: '1950s' },
 ]
 
+const formatOptions = [
+  { value: '', label: 'All formats' },
+  { value: 'LP', label: 'LP' },
+  { value: 'EP', label: 'EP' },
+  { value: 'Single', label: 'Single' },
+  { value: 'Compilation', label: 'Compilation' },
+]
+
 const CollectionControls: React.FC<CollectionControlsProps> = ({
   query,
   setQuery,
@@ -39,6 +49,8 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
   setSortKey,
   filterDecade,
   setFilterDecade,
+  filterFormat,
+  setFilterFormat,
 }) => {
   return (
     <section
@@ -89,6 +101,24 @@ const CollectionControls: React.FC<CollectionControlsProps> = ({
               className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
             >
               {decadeOptions.map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex-1">
+            <label htmlFor="format" className="sr-only">
+              Filter by format
+            </label>
+            <select
+              id="format"
+              value={filterFormat}
+              onChange={(e) => setFilterFormat(e.target.value)}
+              aria-label="Filter by format"
+              className="h-12 rounded-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-gray-50 text-gray-900 w-full transition-all dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+            >
+              {formatOptions.map((opt) => (
                 <option key={opt.value} value={opt.value}>
                   {opt.label}
                 </option>
