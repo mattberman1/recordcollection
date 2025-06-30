@@ -1,17 +1,18 @@
 import React, { useState } from 'react'
-import { Album } from '../lib/supabase'
-import { albumService } from '../services/albumService'
 import AddAlbumForm from '../components/AddAlbumForm'
 import CSVImport from '../components/CSVImport'
 import { Plus, Upload, CheckCircle } from 'lucide-react'
+import { useAddAlbum, useAddAlbums } from '../hooks/useAlbums'
 
 const AddAlbumPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single')
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const addAlbumMutation = useAddAlbum()
+  const addAlbumsMutation = useAddAlbums()
 
-  const handleAddAlbum = async (album: Omit<Album, 'id' | 'created_at' | 'updated_at'>) => {
+  const handleAddAlbum = async (album: any) => {
     try {
-      await albumService.addAlbum(album)
+      await addAlbumMutation.mutateAsync(album)
       setSuccessMessage(`"${album.title}" by ${album.artist} added successfully!`)
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
@@ -19,9 +20,9 @@ const AddAlbumPage: React.FC = () => {
     }
   }
 
-  const handleAddAlbums = async (albums: Omit<Album, 'id' | 'created_at' | 'updated_at'>[]) => {
+  const handleAddAlbums = async (albums: any[]) => {
     try {
-      await albumService.addAlbums(albums)
+      await addAlbumsMutation.mutateAsync(albums)
       setSuccessMessage(`${albums.length} albums added successfully!`)
       setTimeout(() => setSuccessMessage(null), 3000)
     } catch (error) {
