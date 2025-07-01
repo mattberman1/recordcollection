@@ -17,11 +17,11 @@ const AlbumOfTheDay: React.FC = () => {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetchRandomAlbum = async () => {
+    const fetchAlbumOfTheDay = async () => {
       setLoading(true)
       setError(null)
       try {
-        const { data, error } = await supabase.rpc('get_random_album')
+        const { data, error } = await supabase.rpc('get_album_of_the_day')
         if (error) {
           setError('Failed to load album: ' + error.message)
           setAlbum(null)
@@ -40,7 +40,7 @@ const AlbumOfTheDay: React.FC = () => {
         setLoading(false)
       }
     }
-    fetchRandomAlbum()
+    fetchAlbumOfTheDay()
   }, [])
 
   if (loading) {
@@ -78,12 +78,16 @@ const AlbumOfTheDay: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate">
-          Album of the Day: {album.title}
+      <div className="flex-1 min-w-0 text-left">
+        <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
+          Album of the Day
         </div>
-        <div className="text-gray-600 dark:text-gray-400 truncate">
-          {album.artist} {album.release_year ? `(${album.release_year})` : ''}
+        <div className="text-lg font-semibold text-gray-900 dark:text-gray-100 truncate mb-1">
+          {album.title}
+        </div>
+        <div className="text-gray-600 dark:text-gray-400 truncate mb-1">{album.artist}</div>
+        <div className="text-sm text-gray-500 dark:text-gray-400">
+          {album.release_year > 0 ? album.release_year : '—'}
         </div>
       </div>
     </div>
