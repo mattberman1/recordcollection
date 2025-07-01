@@ -44,6 +44,7 @@ jest.mock('../hooks/useAlbums', () => ({
     error: null,
   }),
   useDeleteAlbum: () => ({ mutateAsync: jest.fn() }),
+  useUpdateAlbum: () => ({ mutateAsync: jest.fn() }),
 }))
 
 describe('CollectionPage', () => {

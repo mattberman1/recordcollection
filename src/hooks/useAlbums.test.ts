@@ -1,7 +1,7 @@
 import React from 'react'
 import { renderHook } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useAlbums, useAddAlbum, useDeleteAlbum, useAddAlbums } from './useAlbums'
+import { useAlbums, useAddAlbum, useDeleteAlbum, useAddAlbums, useUpdateAlbum } from './useAlbums'
 
 // Mock Supabase client
 jest.mock('../lib/supabase', () => ({
@@ -15,6 +15,13 @@ jest.mock('../lib/supabase', () => ({
       insert: jest.fn(() => ({
         select: jest.fn(() => ({
           single: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+        })),
+      })),
+      update: jest.fn(() => ({
+        eq: jest.fn(() => ({
+          select: jest.fn(() => ({
+            single: jest.fn(() => Promise.resolve({ data: {}, error: null })),
+          })),
         })),
       })),
       delete: jest.fn(() => ({
@@ -76,6 +83,18 @@ describe('useAddAlbums', () => {
 describe('useDeleteAlbum', () => {
   it('should return delete mutation functions', () => {
     const { result } = renderHook(() => useDeleteAlbum(), {
+      wrapper: createWrapper(),
+    })
+
+    expect(result.current).toBeDefined()
+    expect(typeof result.current.mutate).toBe('function')
+    expect(typeof result.current.isPending).toBeDefined()
+  })
+})
+
+describe('useUpdateAlbum', () => {
+  it('should return update mutation functions', () => {
+    const { result } = renderHook(() => useUpdateAlbum(), {
       wrapper: createWrapper(),
     })
 

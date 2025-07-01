@@ -98,13 +98,15 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
 
       if (releases.length > 0) {
         // Sort by release date (earliest first)
-        const sortedReleases = releases.sort((a: any, b: any) => {
-          const dateA = a.date || a['first-release-date'] || ''
-          const dateB = b.date || b['first-release-date'] || ''
-          const yearA = parseInt(dateA.split('-')[0]) || 9999
-          const yearB = parseInt(dateB.split('-')[0]) || 9999
-          return yearA - yearB
-        })
+        const sortedReleases = releases.sort(
+          (a: Record<string, unknown>, b: Record<string, unknown>) => {
+            const dateA = a.date || a['first-release-date'] || ''
+            const dateB = b.date || b['first-release-date'] || ''
+            const yearA = parseInt(dateA.split('-')[0]) || 9999
+            const yearB = parseInt(dateB.split('-')[0]) || 9999
+            return yearA - yearB
+          },
+        )
 
         const selectedRelease = sortedReleases[0]
         const releaseYear =

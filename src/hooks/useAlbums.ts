@@ -25,6 +25,17 @@ const addAlbums = async (albums: NewAlbum[]): Promise<Album[]> => {
   return data as Album[]
 }
 
+const updateAlbum = async (id: string, updates: Partial<Album>): Promise<Album> => {
+  const { data, error } = await supabase
+    .from('albums')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return data as Album
+}
+
 const deleteAlbum = async (id: string): Promise<void> => {
   const { error } = await supabase.from('albums').delete().eq('id', id)
   if (error) throw error
@@ -61,6 +72,16 @@ export function useDeleteAlbum() {
   const queryClient = useQueryClient()
   return useMutation<void, Error, string>({
     mutationFn: deleteAlbum,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['albums'] })
+    },
+  })
+}
+
+export function useUpdateAlbum() {
+  const queryClient = useQueryClient()
+  return useMutation<Album, Error, { id: string; updates: Partial<Album> }>({
+    mutationFn: ({ id, updates }) => updateAlbum(id, updates),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['albums'] })
     },
