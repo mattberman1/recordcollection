@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Album } from '../lib/supabase'
 import { Trash2, Music } from 'lucide-react'
 import AlbumDetailModal from './AlbumDetailModal'
+import AlbumArt from './AlbumArt'
 
 interface AlbumListProps {
   albums: Album[]
@@ -110,23 +111,12 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
                     >
                       <div className="flex items-center space-x-4 flex-1 min-w-0">
                         <div className="flex-shrink-0">
-                          {album.album_art_url ? (
-                            <img
-                              className="h-16 w-16 rounded-lg object-cover"
-                              src={album.album_art_url}
-                              alt={`${album.title} album art`}
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = 'none'
-                                target.nextElementSibling?.classList.remove('hidden')
-                              }}
-                            />
-                          ) : null}
-                          <div
-                            className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${album.album_art_url ? 'hidden' : ''}`}
-                          >
-                            <Music className="h-8 w-8 text-gray-400" />
-                          </div>
+                          <AlbumArt
+                            url={album.album_art_url}
+                            alt={`${album.title} album art`}
+                            className="h-16 w-16"
+                            iconClassName="h-8 w-8"
+                          />
                         </div>
                         <div className="flex-1 min-w-0 flex flex-row items-center">
                           <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors text-left flex-1">
@@ -186,23 +176,12 @@ const AlbumList: React.FC<AlbumListProps> = ({ albums, onDeleteAlbum, onUpdateAl
             >
               <div className="flex items-center space-x-4 flex-1 min-w-0">
                 <div className="flex-shrink-0">
-                  {album.album_art_url ? (
-                    <img
-                      className="h-16 w-16 rounded-lg object-cover"
-                      src={album.album_art_url}
-                      alt={`${album.title} album art`}
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement
-                        target.style.display = 'none'
-                        target.nextElementSibling?.classList.remove('hidden')
-                      }}
-                    />
-                  ) : null}
-                  <div
-                    className={`h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center ${album.album_art_url ? 'hidden' : ''}`}
-                  >
-                    <Music className="h-8 w-8 text-gray-400" />
-                  </div>
+                  <AlbumArt
+                    url={album.album_art_url}
+                    alt={`${album.title} album art`}
+                    className="h-16 w-16"
+                    iconClassName="h-8 w-8"
+                  />
                 </div>
                 <div className="flex-1 min-w-0 flex flex-row items-center">
                   <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 truncate group-hover:text-blue-600 transition-colors text-left flex-1">

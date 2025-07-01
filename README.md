@@ -119,8 +119,6 @@ src/
 │   ├── HomePage.tsx     # Home page
 │   ├── AddAlbumPage.tsx # Add album page
 │   └── CollectionPage.tsx # Collection page
-├── services/
-│   └── albumService.ts  # Database operations (legacy)
 ├── App.tsx              # Main app component
 ├── index.tsx            # App entry point
 └── index.css            # Global styles

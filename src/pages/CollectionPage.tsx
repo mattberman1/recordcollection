@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react'
 import AlbumList from '../components/AlbumList'
 import { Loader2 } from 'lucide-react'
 import { useAlbums, useDeleteAlbum } from '../hooks/useAlbums'
+import { Album } from '../lib/supabase'
 import CollectionControls from '../components/CollectionControls'
 import { useDebounce } from '../hooks/useDebounce'
 
@@ -82,7 +83,7 @@ const CollectionPage: React.FC = () => {
     }
   }
 
-  const handleUpdateAlbum = async (updatedAlbum: any) => {
+  const handleUpdateAlbum = async (updatedAlbum: Album) => {
     // This can be handled via optimistic update or refetch, depending on your update logic
   }
 

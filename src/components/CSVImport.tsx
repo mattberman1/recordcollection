@@ -18,6 +18,13 @@ interface ImportResult {
   error?: string
 }
 
+interface MusicBrainzRelease {
+  id: string
+  title: string
+  date?: string
+  'first-release-date'?: string
+}
+
 const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
   const [isImporting, setIsImporting] = useState(false)
   const [importResults, setImportResults] = useState<ImportResult[]>([])
@@ -94,13 +101,13 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
       }
 
       const data = await response.json()
-      const releases = data.releases || []
+      const releases: MusicBrainzRelease[] = data.releases || []
 
       if (releases.length > 0) {
         // Sort by release date (earliest first)
-        const sortedReleases = releases.sort((a: any, b: any) => {
-          const dateA = a.date || a['first-release-date'] || ''
-          const dateB = b.date || b['first-release-date'] || ''
+        const sortedReleases = releases.sort((a, b) => {
+          const dateA = a.date ?? a['first-release-date'] ?? ''
+          const dateB = b.date ?? b['first-release-date'] ?? ''
           const yearA = parseInt(dateA.split('-')[0]) || 9999
           const yearB = parseInt(dateB.split('-')[0]) || 9999
           return yearA - yearB
@@ -109,7 +116,7 @@ const CSVImport: React.FC<CSVImportProps> = ({ onAddAlbums }) => {
         const selectedRelease = sortedReleases[0]
         const releaseYear =
           parseInt(
-            (selectedRelease.date || selectedRelease['first-release-date'] || '').split('-')[0],
+            (selectedRelease.date ?? selectedRelease['first-release-date'] ?? '').split('-')[0],
           ) || 0
 
         // Get cover art

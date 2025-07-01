@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Plus, Music } from 'lucide-react'
+import AlbumArt from '../components/AlbumArt'
 import { supabase } from '../lib/supabase'
 
-interface AlbumOfTheDay {
+interface AlbumOfTheDayData {
   id: string
   title: string
   artist: string
@@ -12,7 +13,7 @@ interface AlbumOfTheDay {
 }
 
 const AlbumOfTheDay: React.FC = () => {
-  const [album, setAlbum] = useState<AlbumOfTheDay | null>(null)
+  const [album, setAlbum] = useState<AlbumOfTheDayData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -33,8 +34,9 @@ const AlbumOfTheDay: React.FC = () => {
           const albumData = Array.isArray(data) ? data[0] : data
           setAlbum(albumData)
         }
-      } catch (err: any) {
-        setError('Failed to load album: ' + (err.message || err.toString()))
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        setError('Failed to load album: ' + message)
         setAlbum(null)
       } finally {
         setLoading(false)
@@ -65,18 +67,12 @@ const AlbumOfTheDay: React.FC = () => {
   return (
     <div className="flex items-center gap-4 p-6 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow mb-8 max-w-xl mx-auto">
       <div className="h-20 w-20 flex-shrink-0">
-        {album.album_art_url ? (
-          <img
-            src={album.album_art_url}
-            alt={`${album.title} album art`}
-            className="h-20 w-20 rounded-lg object-cover"
-            onError={(e) => (e.currentTarget.style.display = 'none')}
-          />
-        ) : (
-          <div className="h-20 w-20 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-            <Music className="h-10 w-10 text-gray-400" />
-          </div>
-        )}
+        <AlbumArt
+          url={album.album_art_url}
+          alt={`${album.title} album art`}
+          className="h-20 w-20"
+          iconClassName="h-10 w-10"
+        />
       </div>
       <div className="flex-1 min-w-0 text-left">
         <div className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">
