@@ -6,13 +6,11 @@ export const useCatalogStats = () =>
     queryKey: ['catalogStats'],
     queryFn: async () => {
       // Get all artists to aggregate top 5
-      const { data: allAlbums } = await supabase
-        .from('albums')
-        .select('artist')
+      const { data: allAlbums } = await supabase.from('albums').select('artist')
 
       // Aggregate top 5 artists in JS
       const artistCounts: Record<string, number> = {}
-      allAlbums?.forEach(a => {
+      allAlbums?.forEach((a) => {
         artistCounts[a.artist] = (artistCounts[a.artist] || 0) + 1
       })
       const topArtists = Object.entries(artistCounts)
