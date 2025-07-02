@@ -35,6 +35,16 @@ const Navigation: React.FC = () => {
               Collection
             </Link>
             <Link
+              to="/stats"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive('/stats')
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-white dark:hover:bg-gray-700'
+              }`}
+            >
+              Stats
+            </Link>
+            <Link
               to="/add"
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1 ${
                 isActive('/add')
