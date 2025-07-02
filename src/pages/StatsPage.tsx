@@ -73,7 +73,7 @@ const StatsPage = () => {
       </StatsCard>
 
       <StatsCard title="Albums by decade">
-        {Object.entries(stats.decade_counts)
+        {Object.entries(stats.decade_counts || {})
           .sort()
           .map(([dec, cnt]) => (
             <div key={dec} className="flex justify-between">
