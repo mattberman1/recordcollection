@@ -1,9 +1,9 @@
 import '@testing-library/jest-dom'
 import { render, screen } from '@testing-library/react'
 import StatsPage from './StatsPage'
+import { useCatalogStats } from '../hooks/useCatalogStats'
 
 jest.mock('../hooks/useCatalogStats')
-import { useCatalogStats } from '../hooks/useCatalogStats'
 
 const mockData = {
   topArtists: [
@@ -29,12 +29,21 @@ const mockData = {
   },
   total: 30,
   unique_artists: 12,
-  decade_counts: { '1950': 2, '1960': 3, '1970': 5, '1980': 7, '1990': 4, '2000': 3, '2010': 4, '2020': 2 },
+  decade_counts: {
+    '1950': 2,
+    '1960': 3,
+    '1970': 5,
+    '1980': 7,
+    '1990': 4,
+    '2000': 3,
+    '2010': 4,
+    '2020': 2,
+  },
 }
 
 describe('StatsPage', () => {
   beforeEach(() => {
-    (useCatalogStats as jest.Mock).mockReturnValue({
+    ;(useCatalogStats as jest.Mock).mockReturnValue({
       data: mockData,
       isLoading: false,
       error: null,
