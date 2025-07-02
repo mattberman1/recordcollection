@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import AddAlbumForm from '../components/AddAlbumForm'
 import CSVImport from '../components/CSVImport'
 import { Plus, Upload, CheckCircle } from 'lucide-react'
-import { useAddAlbum, useAddAlbums } from '../hooks/useAlbums'
+import { useAddAlbum, useAddAlbums, NewAlbum } from '../hooks/useAlbums'
 
 const AddAlbumPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'single' | 'bulk'>('single')
@@ -10,7 +10,7 @@ const AddAlbumPage: React.FC = () => {
   const addAlbumMutation = useAddAlbum()
   const addAlbumsMutation = useAddAlbums()
 
-  const handleAddAlbum = async (album: any) => {
+  const handleAddAlbum = async (album: NewAlbum) => {
     try {
       await addAlbumMutation.mutateAsync(album)
       setSuccessMessage(`"${album.title}" by ${album.artist} added successfully!`)
@@ -20,7 +20,7 @@ const AddAlbumPage: React.FC = () => {
     }
   }
 
-  const handleAddAlbums = async (albums: any[]) => {
+  const handleAddAlbums = async (albums: NewAlbum[]) => {
     try {
       await addAlbumsMutation.mutateAsync(albums)
       setSuccessMessage(`${albums.length} albums added successfully!`)

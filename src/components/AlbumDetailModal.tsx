@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Album } from '../lib/supabase'
-import { albumService } from '../services/albumService'
-import { useDeleteAlbum } from '../hooks/useAlbums'
+import { useDeleteAlbum, useUpdateAlbum } from '../hooks/useAlbums'
 import { X, Edit, Save, Trash2, Music, Calendar, User, Upload } from 'lucide-react'
+import AlbumArt from './AlbumArt'
 
 interface AlbumDetailModalProps {
   album: Album | null
@@ -27,6 +27,7 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const deleteAlbumMutation = useDeleteAlbum()
+  const updateAlbumMutation = useUpdateAlbum()
 
   useEffect(() => {
     if (album) {
@@ -46,11 +47,14 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
 
     try {
       setIsSaving(true)
-      const updatedAlbum = await albumService.updateAlbum(editedAlbum.id, {
-        title: editedAlbum.title,
-        artist: editedAlbum.artist,
-        release_year: editedAlbum.release_year,
-        album_art_url: uploadedImageUrl || editedAlbum.album_art_url,
+      const updatedAlbum = await updateAlbumMutation.mutateAsync({
+        id: editedAlbum.id,
+        updates: {
+          title: editedAlbum.title,
+          artist: editedAlbum.artist,
+          release_year: editedAlbum.release_year,
+          album_art_url: uploadedImageUrl || editedAlbum.album_art_url,
+        },
       })
       onUpdate(updatedAlbum)
       setIsEditing(false)
@@ -162,23 +166,12 @@ const AlbumDetailModal: React.FC<AlbumDetailModalProps> = ({
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">Cover Art</h3>
               <div className="aspect-square bg-gray-50 dark:bg-gray-700 rounded-lg overflow-hidden">
-                {getCurrentImageUrl() ? (
-                  <img
-                    src={getCurrentImageUrl()}
-                    alt={`${editedAlbum.title} cover art`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement
-                      target.style.display = 'none'
-                      target.nextElementSibling?.classList.remove('hidden')
-                    }}
-                  />
-                ) : null}
-                <div
-                  className={`w-full h-full flex items-center justify-center text-gray-500 ${getCurrentImageUrl() ? 'hidden' : ''}`}
-                >
-                  <Music className="h-16 w-16" />
-                </div>
+                <AlbumArt
+                  url={getCurrentImageUrl() || undefined}
+                  alt={`${editedAlbum.title} cover art`}
+                  className="w-full h-full"
+                  iconClassName="h-16 w-16"
+                />
               </div>
 
               {isEditing && (

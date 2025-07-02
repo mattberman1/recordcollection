@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Album } from '../lib/supabase'
-import { Plus, Search, Loader2, Music } from 'lucide-react'
+import { Plus, Search, Loader2 } from 'lucide-react'
+import AlbumArt from './AlbumArt'
 
 interface AddAlbumFormProps {
   onAddAlbum: (album: Omit<Album, 'id' | 'created_at' | 'updated_at'>) => void
@@ -271,25 +272,12 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
                   className="w-full text-left p-3 border border-gray-200 rounded-md hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center space-x-3"
                 >
                   <div className="flex-shrink-0">
-                    {album.coverArtUrl ? (
-                      <img
-                        src={album.coverArtUrl}
-                        alt={`${album.title} cover art`}
-                        className="h-12 w-12 rounded object-cover"
-                        onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                          console.error('Image failed to load:', album.coverArtUrl)
-                          // Fallback to placeholder if image fails to load
-                          const target = e.target as HTMLImageElement
-                          target.style.display = 'none'
-                          target.nextElementSibling?.classList.remove('hidden')
-                        }}
-                      />
-                    ) : null}
-                    <div
-                      className={`h-12 w-12 rounded bg-gray-200 flex items-center justify-center ${album.coverArtUrl ? 'hidden' : ''}`}
-                    >
-                      <Music className="h-6 w-6 text-gray-400" />
-                    </div>
+                    <AlbumArt
+                      url={album.coverArtUrl}
+                      alt={`${album.title} cover art`}
+                      className="h-12 w-12"
+                      iconClassName="h-6 w-6"
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
@@ -311,24 +299,12 @@ const AddAlbumForm: React.FC<AddAlbumFormProps> = ({ onAddAlbum }) => {
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
           <h3 className="text-sm font-medium text-blue-900 mb-2">Selected Album:</h3>
           <div className="flex items-center space-x-3">
-            {selectedAlbum.coverArtUrl ? (
-              <img
-                src={selectedAlbum.coverArtUrl}
-                alt={`${selectedAlbum.title} cover art`}
-                className="h-16 w-16 rounded object-cover"
-                onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
-                  console.error('Selected album image failed to load:', selectedAlbum.coverArtUrl)
-                  const target = e.target as HTMLImageElement
-                  target.style.display = 'none'
-                  target.nextElementSibling?.classList.remove('hidden')
-                }}
-              />
-            ) : null}
-            <div
-              className={`h-16 w-16 rounded bg-gray-200 flex items-center justify-center ${selectedAlbum.coverArtUrl ? 'hidden' : ''}`}
-            >
-              <Music className="h-8 w-8 text-gray-400" />
-            </div>
+            <AlbumArt
+              url={selectedAlbum.coverArtUrl}
+              alt={`${selectedAlbum.title} cover art`}
+              className="h-16 w-16"
+              iconClassName="h-8 w-8"
+            />
             <div className="text-sm text-blue-800">
               <div>
                 <strong>{selectedAlbum.title}</strong>
